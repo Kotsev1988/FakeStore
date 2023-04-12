@@ -13,7 +13,7 @@ class ProductsCache(private val db: Database): IProductsCache {
 
     override fun insertProductsToDB(category: String, products: List<ProductsItem>) =
         Single.fromCallable {
-            val roomProductCategory = db.categoriesDao.findByCategoryId(category)
+
             val productsRoom = products.map { products ->
                 RoomProduct(products.id,
                     products.category,
