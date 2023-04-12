@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">FakeStore</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="card_menu">\u25CF</string>
+    <string name="like_menu">\u25CF</string>
+    <string name="profile_menu">\u25CF</string>
+    <string name="explorer_menu">\u25CF</string>
+</resources>
