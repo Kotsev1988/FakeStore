@@ -3,10 +3,10 @@ package com.example.fakestore.ui.delegateAdapter.bestSellers
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fakestore.App
 import com.example.fakestore.databinding.ItemBestSellersBinding
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapter
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapterItem
-import com.example.fakestore.ui.delegateAdapter.categories.CategoryHorizontalAdapter
 
 class BestSellersDelegateAdapter :
     DelegateAdapter<BestSellers, BestSellersDelegateAdapter.BestSellersViewHolder>(BestSellers::class.java) {
@@ -27,12 +27,14 @@ class BestSellersDelegateAdapter :
         viewHolder.bind(model)
     }
 
-    inner class BestSellersViewHolder(val binding: ItemBestSellersBinding) :
+    inner class BestSellersViewHolder(private val binding: ItemBestSellersBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: BestSellers) {
 
-            bestSellersProductAdapter = BestSellersProductAdapter(model.presenter)
+            bestSellersProductAdapter = BestSellersProductAdapter(model.presenter).apply {
+                App.instance.appComponent.inject(this)
+            }
             binding.hotsalesRecycle.adapter = bestSellersProductAdapter
         }
     }

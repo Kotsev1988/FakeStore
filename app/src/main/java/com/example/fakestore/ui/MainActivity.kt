@@ -3,39 +3,54 @@ package com.example.fakestore.ui
 import android.os.Bundle
 import com.example.fakestore.App
 import com.example.fakestore.R
-import com.example.fakestore.ui.screens.AndroidScreens
+import com.example.fakestore.databinding.ActivityMainBinding
+import com.example.fakestore.ui.screens.IScreens
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 class MainActivity : MvpAppCompatActivity(), MainView {
-    val navigator = AppNavigator(this, R.id.container)
 
-    private val presenter: MainPresenter by moxyPresenter{
-        MainPresenter(App.instance.router, AndroidScreens())
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+    private val navigator = AppNavigator(this, R.id.container)
+
+    @Inject
+    lateinit var router: Router
+    @Inject
+    lateinit var screens: IScreens
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+
+    private val presenter: MainPresenter by moxyPresenter {
+        MainPresenter(router, screens)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.instance.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.instance.navigatorHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
         super.onPause()
-        App.instance.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
     }
 
-
     override fun onBackPressed() {
-        super.onBackPressed()
-
-        supportFragmentManager.fragments.forEach {
-            if (it is BackPressedListener && it.backPressed()){
+        supportFragmentManager.fragments.forEach { it ->
+            if (it is BackPressedListener && it.backPressed()) {
                 return
             }
         }

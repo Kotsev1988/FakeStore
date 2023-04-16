@@ -1,9 +1,10 @@
-package com.example.fakestore.ui.fragments
+package com.example.fakestore.ui.fragments.storeFragment
 
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
 import com.example.fakestore.ui.delegateAdapter.bestSellers.ProductsListPresenter
 import com.example.fakestore.ui.delegateAdapter.categories.CategoryListPresenter
+import com.example.fakestore.ui.screens.AndroidScreens
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
@@ -15,6 +16,8 @@ class StorePresenter (
     private val uiScheduler: Scheduler
 
 ): MvpPresenter<StoreView>() {
+
+
 
     val listCategory = CategoryListPresenter()
     val listProduct = ProductsListPresenter()
@@ -31,7 +34,8 @@ class StorePresenter (
         }
 
         listProduct.onItemClickListener = {
-            println("ProductClick "+listProduct.products[it.pos].toString())
+            val id = listProduct.products[it.pos].id
+            router.navigateTo(AndroidScreens().product(id.toString()))
         }
     }
 

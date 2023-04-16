@@ -1,33 +1,32 @@
-package com.example.fakestore.ui.fragments
+package com.example.fakestore.ui.fragments.storeFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.fakestore.App
-import com.example.fakestore.data.GetCategoriesImpl
-import com.example.fakestore.data.GetProductsImpl
-import com.example.fakestore.data.api.StoreAPI
-import com.example.fakestore.data.room.Database
-import com.example.fakestore.data.room.cache.room.CategoriesCache
-import com.example.fakestore.data.room.cache.room.ProductsCache
 import com.example.fakestore.databinding.FragmentStoreBinding
+import com.example.fakestore.domain.IGetCategories
+import com.example.fakestore.domain.IGetProducts
 import com.example.fakestore.ui.BackPressedListener
 import com.example.fakestore.ui.delegateAdapter.MainAdapter
 import com.example.fakestore.ui.delegateAdapter.bestSellers.BestSellers
 import com.example.fakestore.ui.delegateAdapter.bestSellers.BestSellersDelegateAdapter
 import com.example.fakestore.ui.delegateAdapter.categories.Category
 import com.example.fakestore.ui.delegateAdapter.categories.CategoryDelegateAdapter
-import com.example.fakestore.ui.network.AndroidNetworkStatus
+import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 
 class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
 
     private var _binding: FragmentStoreBinding? = null
     private val binding get() = _binding!!
+
 
     private val mainAdapter by lazy {
         MainAdapter.Builder()
@@ -36,33 +35,28 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
             .build()
     }
 
-    val presenter: StorePresenter by moxyPresenter {
+    @Inject
+    lateinit var productList: IGetProducts
+
+    @Inject
+    lateinit var categoryList: IGetCategories
+
+    @Inject
+    lateinit var router: Router
+
+    private val presenter: StorePresenter by moxyPresenter {
         StorePresenter(
-
-            GetCategoriesImpl(StoreAPI(),
-            AndroidNetworkStatus(App.instance),
-            CategoriesCache(
-                Database.getInstance())),
-
-            GetProductsImpl(StoreAPI(),
-                AndroidNetworkStatus(App.instance),
-                ProductsCache(Database.getInstance())),
-
-            App.instance.router,
-
+            categoryList,
+            productList,
+            router,
             AndroidSchedulers.mainThread()
         )
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = FragmentStoreBinding.inflate(inflater)
         return binding.root
     }
@@ -71,7 +65,9 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
 
         @JvmStatic
         fun newInstance() =
-            StoreFragment()
+            StoreFragment().apply {
+                App.instance.appComponent.inject(this)
+            }
     }
 
     override fun init() {
@@ -87,7 +83,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
     }
 
     override fun onError(e: Throwable) {
-
+        Toast.makeText(requireActivity(), e.message, Toast.LENGTH_SHORT).show()
     }
 
     override fun updateList() {

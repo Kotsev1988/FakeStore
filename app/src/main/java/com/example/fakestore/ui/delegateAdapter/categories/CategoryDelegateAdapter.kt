@@ -3,6 +3,7 @@ package com.example.fakestore.ui.delegateAdapter.categories
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fakestore.App
 import com.example.fakestore.databinding.ItemCategoryBinding
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapter
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapterItem
@@ -26,7 +27,9 @@ class CategoryDelegateAdapter(): DelegateAdapter<Category, CategoryDelegateAdapt
 
         fun bind(model: Category) {
 
-            categoryHorizontalAdapter = CategoryHorizontalAdapter(model.presenter)
+            categoryHorizontalAdapter = CategoryHorizontalAdapter(model.presenter).apply {
+                App.instance.appComponent.inject(this)
+            }
             binding.recyclerView2.adapter = categoryHorizontalAdapter
 
 

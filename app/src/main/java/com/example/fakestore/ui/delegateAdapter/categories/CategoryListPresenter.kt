@@ -11,7 +11,9 @@ class CategoryListPresenter: IListCategoryPresenter{
         var category = categories[view.pos]
 
         view.setText(category)
-        view.loadAvatar(category.toString())
+
+            view.loadAvatar(category)
+
         view.clickButton()
 
     }

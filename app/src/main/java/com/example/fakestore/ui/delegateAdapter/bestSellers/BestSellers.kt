@@ -2,7 +2,6 @@ package com.example.fakestore.ui.delegateAdapter.bestSellers
 
 import com.example.fakestore.domain.productsEntity.Products
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapterItem
-import com.example.fakestore.ui.delegateAdapter.categories.IListCategoryPresenter
 
 data class BestSellers(val products: Products, val presenter: IListProductPresenter): DelegateAdapterItem {
 

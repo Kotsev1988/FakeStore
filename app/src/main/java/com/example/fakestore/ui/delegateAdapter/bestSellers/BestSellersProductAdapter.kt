@@ -2,11 +2,17 @@ package com.example.fakestore.ui.delegateAdapter.bestSellers
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.fakestore.databinding.ItemProductsBinding
+import com.example.fakestore.ui.loadImage.ILoadImage
+import javax.inject.Inject
 
 class BestSellersProductAdapter(private val presenter: IListProductPresenter): RecyclerView.Adapter<BestSellersProductAdapter.BestSellersProductViewHolder>() {
+
+
+    @Inject
+    lateinit var imageLoader: ILoadImage<ImageView>
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -40,9 +46,10 @@ class BestSellersProductAdapter(private val presenter: IListProductPresenter): R
 
         override fun setProductImage(url: String) {
 
-            Glide.with(binding.techImage.context)
-                .load(url)
-                .into(binding.techImage)
+            imageLoader.loadImage(url, binding.techImage)
+//            Glide.with(binding.techImage.context)
+//                .load(url)
+//                .into(binding.techImage)
         }
     }
 

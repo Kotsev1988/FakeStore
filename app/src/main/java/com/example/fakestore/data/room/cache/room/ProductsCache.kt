@@ -2,7 +2,7 @@ package com.example.fakestore.data.room.cache.room
 
 import com.example.fakestore.data.room.Database
 import com.example.fakestore.data.room.cache.IProductsCache
-import com.example.fakestore.data.room.product.entity.RoomProduct
+import com.example.fakestore.data.room.products.entity.RoomProducts
 import com.example.fakestore.domain.productsEntity.ProductsItem
 import com.example.fakestore.domain.productsEntity.Rating
 import io.reactivex.rxjava3.core.Single
@@ -15,7 +15,7 @@ class ProductsCache(private val db: Database): IProductsCache {
         Single.fromCallable {
 
             val productsRoom = products.map { products ->
-                RoomProduct(products.id,
+                RoomProducts(products.id,
                     products.category,
                     products.description,
                     products.image,

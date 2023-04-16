@@ -12,11 +12,11 @@ interface IStoreAPI {
     @GET("products/categories")
     fun getAllCategories(): Single<Categories>
 
-    @GET("products")
-    fun getAllProducts(): Single<Products>
-
     @GET("/products/category/{category}")
-    fun getCategory(@Path("category") category: String): Single<Products>
+    fun getProductByCategory(@Path("category") category: String): Single<Products>
+
+    @GET("/products/{id}")
+    fun getProductById(@Path("id")id: String): Single<ProductsItem>
 
 
 }

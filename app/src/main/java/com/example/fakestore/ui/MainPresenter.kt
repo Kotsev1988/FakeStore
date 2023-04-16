@@ -8,11 +8,12 @@ class MainPresenter(private val router: Router, private val screens: IScreens): 
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        router.replaceScreen(screens.baseFragment())
+        router.replaceScreen(screens.store())
     }
 
     fun backClicked(){
         router.exit()
     }
+
 
 }

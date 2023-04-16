@@ -6,4 +6,6 @@
     <string name="like_menu">\u25CF</string>
     <string name="profile_menu">\u25CF</string>
     <string name="explorer_menu">\u25CF</string>
+    <string name="add_to_card">Add To Card</string>
+    <string name="product_details">Product Details</string>
 </resources>
