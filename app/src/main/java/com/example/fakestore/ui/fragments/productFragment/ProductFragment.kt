@@ -8,7 +8,6 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.fakestore.App
 import com.example.fakestore.R
-import com.example.fakestore.data.room.Database
 import com.example.fakestore.databinding.FragmentProductBinding
 import com.example.fakestore.domain.IGetProductById
 import com.example.fakestore.ui.BackPressedListener
@@ -26,13 +25,14 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
 
     @Inject
     lateinit var router: Router
-    @Inject
-    lateinit var database: Database
+
     @Inject
     lateinit var getProduct: IGetProductById
 
 
     val presenter: ProductPresenter by moxyPresenter {
+
+
 
         val id = arguments?.getString(PRODUCT_ID)
         ProductPresenter(id, router, AndroidSchedulers.mainThread(),
@@ -86,6 +86,10 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
         Toast.makeText(requireActivity(), e.message, Toast.LENGTH_SHORT).show()
     }
 
+    override fun remove() {
+        App.instance.removeProductSubcomponent()
+    }
+
     override fun backPressed(): Boolean = presenter.backClicked()
 
     companion object {
@@ -97,7 +101,7 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
                 arguments = Bundle().apply {
                     putString(PRODUCT_ID, id)
                 }
-                App.instance.appComponent.inject(this)
+                 App.instance.initProductSubcomponent().inject(this)
             }
     }
 }

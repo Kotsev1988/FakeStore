@@ -38,6 +38,7 @@ class CategoryHorizontalAdapter(private val presenter: IListCategoryPresenter) :
 
     inner class CategoryHorizontalViewHolder(private val binding: ItemCategoryNameBinding) :
         RecyclerView.ViewHolder(binding.root), CategoryItemView {
+
         override fun clickButton() {
             binding.Phones.setOnClickListener {
                 presenter.itemClickListener?.invoke(this)

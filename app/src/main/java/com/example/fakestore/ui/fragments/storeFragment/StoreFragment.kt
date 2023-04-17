@@ -21,7 +21,6 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
-
 class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
 
     private var _binding: FragmentStoreBinding? = null
@@ -77,6 +76,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
         val productList = presenter.listProduct.products
 
         binding.recyclerView.adapter = mainAdapter
+
         mainAdapter.submitList(listOf(Category(categoryList, presenter = presenter.listCategory),
             BestSellers(productList, presenter.listProduct)))
 

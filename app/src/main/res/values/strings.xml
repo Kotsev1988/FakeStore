@@ -8,4 +8,6 @@
     <string name="explorer_menu">\u25CF</string>
     <string name="add_to_card">Add To Card</string>
     <string name="product_details">Product Details</string>
+    <string name="select_category">Select Category</string>
+    <string name="best_seller">Best Seller</string>
 </resources>

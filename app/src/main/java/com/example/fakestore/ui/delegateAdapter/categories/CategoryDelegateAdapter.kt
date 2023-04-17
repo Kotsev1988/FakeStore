@@ -32,7 +32,6 @@ class CategoryDelegateAdapter(): DelegateAdapter<Category, CategoryDelegateAdapt
             }
             binding.recyclerView2.adapter = categoryHorizontalAdapter
 
-
         }
     }
 }

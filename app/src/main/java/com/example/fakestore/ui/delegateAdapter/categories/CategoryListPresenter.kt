@@ -2,7 +2,7 @@ package com.example.fakestore.ui.delegateAdapter.categories
 
 import com.example.fakestore.domain.productsEntity.Categories
 
-class CategoryListPresenter: IListCategoryPresenter{
+class CategoryListPresenter : IListCategoryPresenter {
     var categories = Categories()
     override var itemClickListener: ((CategoryItemView) -> Unit)? = null
 
@@ -12,7 +12,7 @@ class CategoryListPresenter: IListCategoryPresenter{
 
         view.setText(category)
 
-            view.loadAvatar(category)
+        view.loadAvatar(category)
 
         view.clickButton()
 

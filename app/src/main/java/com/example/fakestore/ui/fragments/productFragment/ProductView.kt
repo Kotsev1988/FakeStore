@@ -12,5 +12,6 @@ interface ProductView: MvpView {
     fun setDescription(description: String)
     fun setPrice(price: String)
     fun onError(e: Throwable)
+    fun remove()
 
 }

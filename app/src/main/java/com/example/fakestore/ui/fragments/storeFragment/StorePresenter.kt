@@ -17,8 +17,6 @@ class StorePresenter (
 
 ): MvpPresenter<StoreView>() {
 
-
-
     val listCategory = CategoryListPresenter()
     val listProduct = ProductsListPresenter()
 
@@ -27,7 +25,6 @@ class StorePresenter (
 
         viewState.init()
         loadCategories()
-
 
         listCategory.itemClickListener = {
             loadProducts(listCategory.categories[it.pos])
