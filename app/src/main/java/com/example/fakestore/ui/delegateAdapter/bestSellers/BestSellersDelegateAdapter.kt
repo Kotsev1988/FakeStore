@@ -32,8 +32,10 @@ class BestSellersDelegateAdapter :
 
         fun bind(model: BestSellers) {
 
-            bestSellersProductAdapter = BestSellersProductAdapter(model.presenter).apply {
-                App.instance.appComponent.inject(this)
+            bestSellersProductAdapter = model.presenter?.let {
+                BestSellersProductAdapter(it).apply {
+                    App.instance.appComponent.inject(this)
+                }
             }
             binding.hotsalesRecycle.adapter = bestSellersProductAdapter
         }

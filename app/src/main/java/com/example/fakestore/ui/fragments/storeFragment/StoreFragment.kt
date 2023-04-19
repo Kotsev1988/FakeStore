@@ -7,14 +7,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.fakestore.App
 import com.example.fakestore.databinding.FragmentStoreBinding
+import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
+import com.example.fakestore.domain.productsEntity.Categories
+import com.example.fakestore.domain.productsEntity.Products
 import com.example.fakestore.ui.BackPressedListener
 import com.example.fakestore.ui.delegateAdapter.MainAdapter
 import com.example.fakestore.ui.delegateAdapter.bestSellers.BestSellers
 import com.example.fakestore.ui.delegateAdapter.bestSellers.BestSellersDelegateAdapter
 import com.example.fakestore.ui.delegateAdapter.categories.Category
 import com.example.fakestore.ui.delegateAdapter.categories.CategoryDelegateAdapter
+import com.example.fakestore.ui.delegateAdapter.header.Header
+import com.example.fakestore.ui.delegateAdapter.header.HeaderDelegateAdapter
+import com.example.fakestore.ui.delegateAdapter.search.Search
+import com.example.fakestore.ui.delegateAdapter.search.SearchDelegateAdapter
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
@@ -29,10 +36,23 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
 
     private val mainAdapter by lazy {
         MainAdapter.Builder()
+            .add(HeaderDelegateAdapter())
             .add(CategoryDelegateAdapter())
+            .add(SearchDelegateAdapter(presenter.searchClick))
+            .add(HeaderDelegateAdapter())
             .add(BestSellersDelegateAdapter())
             .build()
     }
+
+    private val headerCategory: Header = Header("Select Category")
+    private val headerProduct: Header = Header("BestSellers")
+
+    var listDelegates = listOf(headerProduct, Category(Categories(), null),
+        Search(arrayListOf(), null),
+        headerCategory,
+        BestSellers(Products(), null)
+    )
+
 
     @Inject
     lateinit var productList: IGetProducts
@@ -41,12 +61,16 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
     lateinit var categoryList: IGetCategories
 
     @Inject
+    lateinit var searchingData: IGetAllProducts
+
+    @Inject
     lateinit var router: Router
 
     private val presenter: StorePresenter by moxyPresenter {
         StorePresenter(
             categoryList,
             productList,
+            searchingData,
             router,
             AndroidSchedulers.mainThread()
         )
@@ -69,16 +93,24 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
             }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.adapter = mainAdapter
+    }
+
+
+
     override fun init() {
 
         binding.frameLoad.visibility = View.VISIBLE
-        val categoryList = presenter.listCategory.categories
-        val productList = presenter.listProduct.products
 
-        binding.recyclerView.adapter = mainAdapter
+        listDelegates = listOf(headerProduct, Category(Categories(), presenter.listCategory),
+            Search(arrayListOf(),  presenter.searchingPresenter),
+            headerCategory,
+            BestSellers(Products(), presenter.listProduct)
+        )
 
-        mainAdapter.submitList(listOf(Category(categoryList, presenter = presenter.listCategory),
-            BestSellers(productList, presenter.listProduct)))
+        mainAdapter.submitList(listDelegates)
 
     }
 
@@ -88,7 +120,40 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
 
     override fun updateList() {
         binding.frameLoad.visibility = View.GONE
+
         mainAdapter.notifyDataSetChanged()
+    }
+
+    override fun updateListOnSearching() {
+        listDelegates = listOf(Header(""), Category(Categories(), null),
+            Search(arrayListOf(),  presenter.searchingPresenter),
+            Header(""),
+            BestSellers(Products(), null)
+        )
+
+        mainAdapter.submitList(listDelegates)
+    }
+
+    override fun updateSearchingList() {
+
+
+        listDelegates = listOf(Header(""), Category(Categories(), null),
+            Search(presenter.searchingPresenter.results, presenter.searchingPresenter),
+            Header(""),
+            BestSellers(Products(), null)
+        )
+        mainAdapter.submitList(listDelegates)
+    }
+
+    override fun updateOnClosingSearch() {
+
+
+        listDelegates = listOf(headerProduct, Category(Categories(), presenter.listCategory),
+            Search(arrayListOf(),  null),
+            headerCategory,
+            BestSellers(Products(), presenter.listProduct)
+        )
+        mainAdapter.submitList(listDelegates)
     }
 
     override fun backPressed(): Boolean {

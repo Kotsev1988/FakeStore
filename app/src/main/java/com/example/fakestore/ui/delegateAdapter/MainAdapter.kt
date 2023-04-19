@@ -2,10 +2,12 @@ package com.example.fakestore.ui.delegateAdapter
 
 import android.util.SparseArray
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fakestore.ui.delegateAdapter.categories.Category
 
-class MainAdapter(private val delegates: SparseArray<DelegateAdapter<DelegateAdapterItem,
+class MainAdapter(private var delegates: SparseArray<DelegateAdapter<DelegateAdapterItem,
         RecyclerView.ViewHolder>>) :
     ListAdapter<DelegateAdapterItem, RecyclerView.ViewHolder>(DelegateAdapterItemDiffCallback()) {
 
@@ -18,6 +20,8 @@ class MainAdapter(private val delegates: SparseArray<DelegateAdapter<DelegateAda
         }
         throw NullPointerException("Can not get viewType for position $position")
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return delegates[viewType].createViewHolder(parent)
@@ -43,6 +47,12 @@ class MainAdapter(private val delegates: SparseArray<DelegateAdapter<DelegateAda
         }else{
             throw NullPointerException("can not find adapter for position $position")
         }
+    }
+
+    fun setData( delegates1: SparseArray<DelegateAdapter<DelegateAdapterItem,
+            RecyclerView.ViewHolder>>){
+        delegates = delegates1
+        notifyDataSetChanged()
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {

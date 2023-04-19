@@ -10,4 +10,6 @@
     <string name="product_details">Product Details</string>
     <string name="select_category">Select Category</string>
     <string name="best_seller">Best Seller</string>
+    <string name="app_label">Fake Store</string>
+    <string name="search_hint">search products</string>
 </resources>

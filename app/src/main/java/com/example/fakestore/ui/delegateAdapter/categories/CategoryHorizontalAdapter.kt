@@ -28,6 +28,8 @@ class CategoryHorizontalAdapter(private val presenter: IListCategoryPresenter) :
             }
     }
 
+
+
     override fun onBindViewHolder(holder: CategoryHorizontalViewHolder, position: Int) {
         presenter.bindView(holder.apply {
             pos = position
