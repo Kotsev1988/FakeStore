@@ -1,15 +1,13 @@
 package com.example.fakestore.ui.delegateAdapter.search
 
-import com.example.fakestore.domain.productsEntity.Categories
 import com.example.fakestore.domain.productsEntity.ProductsItem
 import com.example.fakestore.ui.delegateAdapter.DelegateAdapterItem
-import com.example.fakestore.ui.delegateAdapter.categories.Category
 
-class Search(var results: ArrayList<ProductsItem>, val presenter: ILIstSearchingResultPresenter?): DelegateAdapterItem {
+class Search(var results: ArrayList<ProductsItem>, val presenter: IListSearchClick?): DelegateAdapterItem {
 
     override fun id(): Any = Search::class.java
 
-    override fun content(): Any = SearchingContent(results, presenter)
+    override fun content(): Any = results
 
     override fun payload(other: Any): DelegateAdapterItem.Payloadable {
         if (other is Search){
@@ -23,7 +21,7 @@ class Search(var results: ArrayList<ProductsItem>, val presenter: ILIstSearching
 
 
 
-    inner class SearchingContent(private val results: ArrayList<ProductsItem>, val presenter: ILIstSearchingResultPresenter?){
+    inner class SearchingContent(private val results: ArrayList<ProductsItem>, val presenter: IListSearchClick?){
         override fun equals(other: Any?): Boolean {
             if (other is SearchingContent){
               return results == other.results && presenter == other.presenter

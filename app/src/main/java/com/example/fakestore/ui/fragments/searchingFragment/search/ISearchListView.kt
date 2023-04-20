@@ -1,4 +1,4 @@
-package com.example.fakestore.ui.delegateAdapter.search
+package com.example.fakestore.ui.fragments.searchingFragment.search
 
 interface ISearchListView: ISearchView {
 

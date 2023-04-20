@@ -1,7 +1,8 @@
 package com.example.fakestore.ui.delegateAdapter.search
 
-import androidx.appcompat.widget.SearchView
+import android.view.View
 
-interface ISearchClick<V: iclickview>  {
+interface ISearchClick<V: IClickView>  {
     var itemClickListener: ((V) -> Unit)?
+    var listenerFocusChanged: View.OnFocusChangeListener?
 }

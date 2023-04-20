@@ -22,6 +22,7 @@ import com.example.fakestore.ui.delegateAdapter.header.Header
 import com.example.fakestore.ui.delegateAdapter.header.HeaderDelegateAdapter
 import com.example.fakestore.ui.delegateAdapter.search.Search
 import com.example.fakestore.ui.delegateAdapter.search.SearchDelegateAdapter
+
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
@@ -70,7 +71,6 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
         StorePresenter(
             categoryList,
             productList,
-            searchingData,
             router,
             AndroidSchedulers.mainThread()
         )
@@ -105,7 +105,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
         binding.frameLoad.visibility = View.VISIBLE
 
         listDelegates = listOf(headerProduct, Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(),  presenter.searchingPresenter),
+            Search(arrayListOf(),  presenter.searchClick),
             headerCategory,
             BestSellers(Products(), presenter.listProduct)
         )
@@ -124,37 +124,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView, BackPressedListener {
         mainAdapter.notifyDataSetChanged()
     }
 
-    override fun updateListOnSearching() {
-        listDelegates = listOf(Header(""), Category(Categories(), null),
-            Search(arrayListOf(),  presenter.searchingPresenter),
-            Header(""),
-            BestSellers(Products(), null)
-        )
 
-        mainAdapter.submitList(listDelegates)
-    }
-
-    override fun updateSearchingList() {
-
-
-        listDelegates = listOf(Header(""), Category(Categories(), null),
-            Search(presenter.searchingPresenter.results, presenter.searchingPresenter),
-            Header(""),
-            BestSellers(Products(), null)
-        )
-        mainAdapter.submitList(listDelegates)
-    }
-
-    override fun updateOnClosingSearch() {
-
-
-        listDelegates = listOf(headerProduct, Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(),  null),
-            headerCategory,
-            BestSellers(Products(), presenter.listProduct)
-        )
-        mainAdapter.submitList(listDelegates)
-    }
 
     override fun backPressed(): Boolean {
         return presenter.backClicked()

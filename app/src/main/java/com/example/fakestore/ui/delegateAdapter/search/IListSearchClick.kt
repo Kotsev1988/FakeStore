@@ -1,4 +1,4 @@
 package com.example.fakestore.ui.delegateAdapter.search
 
-interface IListSearchClick: ISearchClick<iclickview> {
+interface IListSearchClick: ISearchClick<IClickView> {
 }

@@ -1,8 +1,7 @@
-package com.example.fakestore.ui.delegateAdapter.search
+package com.example.fakestore.ui.fragments.searchingFragment.search
 
 import androidx.appcompat.widget.SearchView
 import com.example.fakestore.domain.productsEntity.ProductsItem
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 interface IListSearchingResult<V: ISearchView> {
     var listener: SearchView.OnQueryTextListener ?

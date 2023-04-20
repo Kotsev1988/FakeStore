@@ -1,12 +1,12 @@
-package com.example.fakestore.ui.delegateAdapter.search
+package com.example.fakestore.ui.fragments.searchingFragment.search
 
 import androidx.appcompat.widget.SearchView
 import com.example.fakestore.domain.productsEntity.ProductsItem
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 class SearchListResultPresenter(
 ) : ILIstSearchingResultPresenter {
     var results = arrayListOf<ProductsItem>()
+
     override var itemClickListener: ((ISearchListView) -> Unit)? = null
 
     override var listener: SearchView.OnQueryTextListener? =null

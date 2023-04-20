@@ -1,4 +1,4 @@
-package com.example.fakestore.ui.delegateAdapter.search
+package com.example.fakestore.ui.fragments.searchingFragment.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -29,6 +29,7 @@ class SearchingListAdapter(private var presenter: ILIstSearchingResultPresenter)
 
     inner class SearchingResultViewHolder(val binding: SearchResultItemBinding) :
         RecyclerView.ViewHolder(binding.root), ISearchListView {
+
         override fun setText(text: String) {
             binding.searchResult.text = text
         }

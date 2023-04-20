@@ -1,15 +1,14 @@
-package com.example.fakestore.ui.fragments.storeFragment
+package com.example.fakestore.ui.fragments.searchingFragment
 
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface StoreView: MvpView {
+interface SearchingView: MvpView {
 
     fun init()
-    fun onError(e: Throwable)
-    fun updateList()
-
-
+    fun updateSearchingList()
+    fun updateListOnSearching()
+     fun onError(it: Throwable)
 }
