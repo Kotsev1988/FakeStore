@@ -1,7 +1,7 @@
 package com.example.fakestore.di.modules
 
-import com.example.fakestore.ui.screens.AndroidScreens
-import com.example.fakestore.ui.screens.IScreens
+import com.example.fakestore.navigation.AndroidScreens
+import com.example.fakestore.navigation.IScreens
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import dagger.Module

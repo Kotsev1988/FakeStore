@@ -1,7 +1,7 @@
 package com.example.fakestore.di.modules
 
 import android.widget.ImageView
-import com.example.fakestore.ui.loadImage.ILoadImage
+import com.example.fakestore.domain.image.ILoadImage
 import com.example.fakestore.ui.loadImage.LoadImage
 import dagger.Module
 import dagger.Provides

@@ -3,7 +3,7 @@ package com.example.fakestore.data
 import com.example.fakestore.data.api.IStoreAPI
 import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.domain.productsEntity.ProductsItem
-import com.example.fakestore.ui.network.INetworkStates
+import com.example.fakestore.domain.network.INetworkStates
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 

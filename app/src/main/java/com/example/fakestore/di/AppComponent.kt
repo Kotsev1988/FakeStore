@@ -1,11 +1,11 @@
 package com.example.fakestore.di
 
 import com.example.fakestore.di.modules.*
-import com.example.fakestore.ui.MainActivity
-import com.example.fakestore.ui.delegateAdapter.bestSellers.BestSellersProductAdapter
-import com.example.fakestore.ui.delegateAdapter.categories.CategoryHorizontalAdapter
-import com.example.fakestore.ui.fragments.searchingFragment.SearchingFragment
-import com.example.fakestore.ui.fragments.storeFragment.StoreFragment
+import com.example.fakestore.ui.activity.MainActivity
+import com.example.fakestore.ui.adapters.bestSellers.BestSellersProductAdapter
+import com.example.fakestore.ui.adapters.categories.CategoryHorizontalAdapter
+import com.example.fakestore.ui.fragments.SearchingFragment
+import com.example.fakestore.ui.fragments.StoreFragment
 import dagger.Component
 import javax.inject.Singleton
 

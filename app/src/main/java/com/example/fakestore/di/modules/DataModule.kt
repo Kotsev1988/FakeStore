@@ -9,7 +9,7 @@ import com.example.fakestore.data.room.cache.IProductsCache
 import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
-import com.example.fakestore.ui.network.INetworkStates
+import com.example.fakestore.domain.network.INetworkStates
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -36,5 +36,6 @@ class DataModule {
     @Singleton
     @Provides
     fun productsAllData( api: IStoreAPI,
-                         networkStatus: INetworkStates):IGetAllProducts = GetAllProducts(api, networkStatus)
+                         networkStatus: INetworkStates
+    ):IGetAllProducts = GetAllProducts(api, networkStatus)
 }
