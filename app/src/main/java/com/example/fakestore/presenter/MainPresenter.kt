@@ -16,5 +16,13 @@ class MainPresenter(private val router: Router, private val screens: IScreens): 
         router.exit()
     }
 
+    fun storeNavigate(){
+        router.navigateTo(screens.store())
+    }
+
+    fun myCartNavigate(){
+        router.navigateTo(screens.myCart())
+    }
+
 
 }

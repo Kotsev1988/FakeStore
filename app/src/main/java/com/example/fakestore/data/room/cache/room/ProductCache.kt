@@ -37,7 +37,9 @@ class ProductCache(private val db: Database): IProductCache {
                     roomProduct.image,
                     roomProduct.price,
                     Rating(0, 0.0),
-                    roomProduct.title)
+                    roomProduct.title,
+                    0
+                )
 
         }.subscribeOn(Schedulers.io())
 

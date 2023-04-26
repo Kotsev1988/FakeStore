@@ -31,4 +31,5 @@ class GetProduct(
            productCache.getProductsFromCache(id)
         }
     }.subscribeOn(Schedulers.io())
+
 }

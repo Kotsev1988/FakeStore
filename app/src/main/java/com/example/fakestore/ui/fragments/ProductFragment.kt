@@ -10,6 +10,7 @@ import com.example.fakestore.App
 import com.example.fakestore.R
 import com.example.fakestore.databinding.FragmentProductBinding
 import com.example.fakestore.domain.IGetProductById
+import com.example.fakestore.domain.IMyCardProducts
 import com.example.fakestore.presenter.ProductPresenter
 import com.example.fakestore.ui.activity.BackPressedListener
 import com.example.fakestore.domain.view.ProductView
@@ -31,14 +32,15 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
     @Inject
     lateinit var getProduct: IGetProductById
 
+    @Inject
+    lateinit var myCardProducts: IMyCardProducts
+
 
     val presenter: ProductPresenter by moxyPresenter {
 
-
-
         val id = arguments?.getString(PRODUCT_ID)
         ProductPresenter(id, router, AndroidSchedulers.mainThread(),
-            getProduct
+            getProduct, myCardProducts
         )
     }
 
@@ -57,6 +59,10 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.addToCart.setOnClickListener{
+            presenter.addToCard()
+        }
 
         binding.backfromdetails.setOnClickListener {
             this.backPressed()
@@ -90,6 +96,22 @@ class ProductFragment : MvpAppCompatFragment(), ProductView, BackPressedListener
 
     override fun remove() {
         App.instance.removeProductSubcomponent()
+    }
+
+    override fun addedToMyCard() {
+        binding.addToCart.visibility = View.GONE
+        binding.existInMyCard.visibility = View.VISIBLE
+        Toast.makeText(requireActivity(), "Successfully added", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun productInMyCard() {
+        binding.addToCart.visibility = View.GONE
+        binding.existInMyCard.visibility = View.VISIBLE
+    }
+
+    override fun turnOnAddButton() {
+        binding.addToCart.visibility = View.VISIBLE
+        binding.existInMyCard.visibility = View.GONE
     }
 
     override fun backPressed(): Boolean = presenter.backClicked()

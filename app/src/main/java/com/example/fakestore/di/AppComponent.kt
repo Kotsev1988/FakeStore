@@ -28,6 +28,8 @@ interface AppComponent {
     fun inject(storeFragment: StoreFragment)
     fun inject(searchingFragment: SearchingFragment)
 
+
     fun inject(bestSellersProductAdapter: BestSellersProductAdapter)
     fun inject(categoryHorizontalAdapter: CategoryHorizontalAdapter)
+    //fun inject(myProductAdapter: MyProductsAdapter)
 }

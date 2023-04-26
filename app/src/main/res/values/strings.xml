@@ -12,4 +12,7 @@
     <string name="best_seller">Best Seller</string>
     <string name="app_label">Fake Store</string>
     <string name="search_hint">search products</string>
+    <string name="exist_in_card">Already exist</string>
+    <string name="my_cart">My Cart</string>
+    <string name="back">back</string>
 </resources>

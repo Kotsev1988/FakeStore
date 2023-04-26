@@ -38,7 +38,34 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.mainBottomNavigationView.setOnItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.explorer ->{
+
+                    presenter.storeNavigate()
+                    // navigateTo(StoreFragment())
+                    true
+                }
+
+                R.id.myCart ->{
+                    presenter.myCartNavigate()
+                    true
+                }
+
+                R.id.likes_Fragment ->{
+                    true
+                }
+
+                R.id.myProfile ->{
+                    true
+                }
+
+                else ->true
+            }
+        }
+
     }
+
 
     override fun onResumeFragments() {
         super.onResumeFragments()

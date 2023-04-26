@@ -78,7 +78,7 @@ class SearchingFragment : MvpAppCompatFragment(), SearchingView, BackPressedList
     override fun updateListOnSearching() {
 
         listDelegateSearch = listOf(
-           SearchInFragment(arrayListOf(ProductsItem("", "", 0, "", 0.0, Rating(0,0.0), "" )),  presenter.searchingPresenter),
+           SearchInFragment(arrayListOf(ProductsItem("", "", 0, "", 0.0, Rating(0,0.0), "" , 0)),  presenter.searchingPresenter),
         )
 
         searchingAdapter.submitList(listDelegateSearch)

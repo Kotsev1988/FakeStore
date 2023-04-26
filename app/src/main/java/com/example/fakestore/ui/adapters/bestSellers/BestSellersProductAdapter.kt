@@ -50,9 +50,7 @@ class BestSellersProductAdapter(private val presenter: IListProductPresenter): R
         override fun setProductImage(url: String) {
 
             imageLoader.loadImage(url, binding.techImage)
-//            Glide.with(binding.techImage.context)
-//                .load(url)
-//                .into(binding.techImage)
+
         }
     }
 

@@ -10,6 +10,8 @@ interface StoreView: MvpView {
     fun init()
     fun onError(e: Throwable)
     fun updateList()
+    fun showBottomDialog()
+    fun filter()
 
 
 }

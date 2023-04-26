@@ -4,12 +4,17 @@ import android.view.View
 import android.view.View.OnFocusChangeListener
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
-import com.example.fakestore.ui.adapters.search.SearchClick
-import com.example.fakestore.navigation.AndroidScreens
+import com.example.fakestore.domain.productsEntity.Products
 import com.example.fakestore.domain.view.StoreView
+import com.example.fakestore.navigation.AndroidScreens
+import com.example.fakestore.ui.adapters.locationAndFilter.FilterClick
+import com.example.fakestore.ui.adapters.search.SearchClick
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
+import java.util.*
 
 class StorePresenter(
     private val categoryList: IGetCategories,
@@ -22,9 +27,11 @@ class StorePresenter(
     val listCategory = CategoryListPresenter()
     val listProduct = ProductsListPresenter()
 
-
     val searchClick = SearchClick()
 
+    val filterClick = FilterClick()
+
+    var  productsFilter = Products()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -41,17 +48,18 @@ class StorePresenter(
             router.navigateTo(AndroidScreens().product(id.toString()))
         }
 
-
-
-        searchClick.listenerFocusChanged =object : OnFocusChangeListener {
+        searchClick.listenerFocusChanged = object : OnFocusChangeListener {
             override fun onFocusChange(p0: View?, p1: Boolean) {
-                println("FocusChanged"+p1)
-                if (p1){
+                if (p1) {
                     router.navigateTo(AndroidScreens().search())
-                }else{
+                } else {
                     return
                 }
             }
+        }
+
+        filterClick.itemClickListener = {
+            viewState.showBottomDialog()
         }
     }
 
@@ -77,6 +85,7 @@ class StorePresenter(
             { products ->
                 listProduct.products.clear()
                 listProduct.products.addAll(products)
+                productsFilter.addAll(products)
                 viewState.updateList()
             },
             {
@@ -90,4 +99,36 @@ class StorePresenter(
         return true
     }
 
+    fun filter(brand: String?, price: String?, result: String?) {
+
+        val getInts = Scanner(price).useDelimiter("[^\\d]+")
+        val firstPrice: Int = getInts.nextInt()
+        val secondPrice: Int = getInts.nextInt()
+
+        if (brand != null) {
+            if (price != null) {
+                if (result != null) {
+
+                    Observable.fromIterable(productsFilter)
+                        .filter {
+                                      it.title == brand
+
+                                    && it.price >= firstPrice
+                                    && it.price <= secondPrice
+                                    //&& it.rating.rate.toString() == result
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(uiScheduler)
+                        .toList()
+                        .subscribe({
+                            listProduct.products.clear()
+                            listProduct.products.addAll(it)
+                                   viewState.filter()
+                        }, {
+                            viewState.onError(it)
+                        })
+                }
+            }
+        }
+    }
 }

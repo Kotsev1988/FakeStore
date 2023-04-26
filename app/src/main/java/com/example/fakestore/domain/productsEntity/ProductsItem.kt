@@ -1,5 +1,9 @@
 package com.example.fakestore.domain.productsEntity
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class ProductsItem(
     val category: String,
     val description: String,
@@ -7,5 +11,6 @@ data class ProductsItem(
     val image: String,
     val price: Double,
     val rating: Rating,
-    val title: String
-)
+    val title: String,
+    val count: Int
+) : Parcelable

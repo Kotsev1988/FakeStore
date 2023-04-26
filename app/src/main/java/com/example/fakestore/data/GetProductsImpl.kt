@@ -29,5 +29,4 @@ class GetProductsImpl(
             }.subscribeOn(Schedulers.io())
 
         }
-
 }

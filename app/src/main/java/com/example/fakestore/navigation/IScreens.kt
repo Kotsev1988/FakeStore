@@ -6,4 +6,5 @@ interface IScreens {
     fun store(): Screen
     fun product(id: String): Screen
     fun search(): Screen
+     fun myCart(): Screen
 }

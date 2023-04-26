@@ -13,12 +13,12 @@ import com.example.fakestore.data.room.categories.entity.RoomCategories
             parentColumns = ["category"],
             childColumns = ["category"],
             onDelete = ForeignKey.CASCADE
-
         )]
 )
 data class RoomProducts (
 
-    @PrimaryKey var id: Int,
+    @PrimaryKey
+    var id: Int,
     var category: String,
     var description: String,
     var image: String,

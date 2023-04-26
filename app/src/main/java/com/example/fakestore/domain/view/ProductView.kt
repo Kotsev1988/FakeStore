@@ -13,5 +13,8 @@ interface ProductView: MvpView {
     fun setPrice(price: String)
     fun onError(e: Throwable)
     fun remove()
+    fun addedToMyCard()
+    fun productInMyCard()
+    fun turnOnAddButton()
 
 }
