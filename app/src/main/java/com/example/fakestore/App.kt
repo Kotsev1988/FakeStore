@@ -1,6 +1,7 @@
 package com.example.fakestore
 
 import android.app.Application
+import android.content.Context
 import com.example.fakestore.di.AppComponent
 import com.example.fakestore.di.DaggerAppComponent
 import com.example.fakestore.di.ProductSubComponent
@@ -31,5 +32,8 @@ class App: Application() {
 
     fun removeProductSubcomponent()  {
         productSubComponent = null
+    }
+    fun getAppContext(): Context {
+        return instance.applicationContext
     }
 }

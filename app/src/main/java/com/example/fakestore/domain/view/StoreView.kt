@@ -12,6 +12,5 @@ interface StoreView: MvpView {
     fun updateList()
     fun showBottomDialog()
     fun filter()
-
-
+    fun setLocation(city: String)
 }

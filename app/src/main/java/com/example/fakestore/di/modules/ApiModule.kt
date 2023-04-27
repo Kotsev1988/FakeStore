@@ -2,7 +2,7 @@ package com.example.fakestore.di.modules
 
 import com.example.fakestore.App
 import com.example.fakestore.data.api.IStoreAPI
-import com.example.fakestore.ui.network.AndroidNetworkStatus
+import com.example.fakestore.presentation.network.AndroidNetworkStatus
 import com.example.fakestore.domain.network.INetworkStates
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

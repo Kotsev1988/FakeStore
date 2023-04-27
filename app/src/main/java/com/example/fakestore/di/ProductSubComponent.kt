@@ -3,9 +3,9 @@ package com.example.fakestore.di
 
 import com.example.fakestore.di.product.ProductScope
 import com.example.fakestore.di.product.module.ProductModule
-import com.example.fakestore.ui.adapters.MyCardAdapter
-import com.example.fakestore.ui.fragments.MyCartFragment
-import com.example.fakestore.ui.fragments.ProductFragment
+import com.example.fakestore.presentation.adapters.MyCardAdapter
+import com.example.fakestore.presentation.fragments.MyCartFragment
+import com.example.fakestore.presentation.fragments.ProductFragment
 import dagger.Subcomponent
 
 @ProductScope
