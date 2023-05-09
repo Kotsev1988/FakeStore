@@ -15,5 +15,8 @@ dependencyResolutionManagement {
 rootProject.name = "FakeStore"
 include ':app'
 include ':store_feature'
-include ':product_feature'
-include ':domain'
+include ':my_card_feature'
+include ':core'
+include ':model'
+include ':mylibrary'
+include ':navigation'

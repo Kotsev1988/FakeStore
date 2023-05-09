@@ -7,12 +7,16 @@
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="Embedded JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/domain" />
-            <option value="$PROJECT_DIR$/product_feature" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/model" />
+            <option value="$PROJECT_DIR$/my_card_feature" />
+            <option value="$PROJECT_DIR$/mylibrary" />
+            <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/store_feature" />
           </set>
         </option>

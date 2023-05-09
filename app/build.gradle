@@ -40,6 +40,12 @@ android {
 
 dependencies {
 
+    implementation project(":core")
+    implementation project(":model")
+    implementation project(":my_card_feature")
+    implementation project(":store_feature")
+
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -66,9 +72,10 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
     implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.0.0'
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 
-    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
-    implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
+
 
     implementation 'androidx.room:room-runtime:2.5.1'
     kapt 'androidx.room:room-compiler:2.5.1'
