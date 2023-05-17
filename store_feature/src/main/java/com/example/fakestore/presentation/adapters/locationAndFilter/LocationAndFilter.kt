@@ -17,7 +17,6 @@ data class LocationAndFilter(
 
     override fun payload(other: Any): DelegateAdapterItem.Payloadable {
         if (other is LocationAndFilter){
-            println("LocationPayload "+location +" "+other.location)
             if (location != other.location){
                 return ChangePayload.LocationNameChanged(other.location)
             }

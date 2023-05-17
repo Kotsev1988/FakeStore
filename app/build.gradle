@@ -44,6 +44,7 @@ dependencies {
     implementation project(":model")
     implementation project(":my_card_feature")
     implementation project(":store_feature")
+    implementation project(":product_detail_feature")
 
 
     implementation 'androidx.core:core-ktx:1.7.0'

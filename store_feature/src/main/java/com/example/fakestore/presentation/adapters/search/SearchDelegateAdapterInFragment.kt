@@ -67,9 +67,6 @@ class SearchDelegateAdapterInFragment() :
         }
 
         fun bindCategoryChanged(result: ArrayList<ProductsItem>) {
-
-           println("CategoryChanged "+result.toString())
-
                 adapter?.notifyDataSetChanged()
 
         }

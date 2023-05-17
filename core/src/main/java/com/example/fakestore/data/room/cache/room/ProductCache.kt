@@ -19,7 +19,9 @@ class ProductCache(private val db: Database): IProductCache {
                     products.description,
                     products.image,
                     products.price,
-                    products.title)
+                    products.title,
+                false
+                    )
 
             db.productsDao.insert(productsRoom)
             products

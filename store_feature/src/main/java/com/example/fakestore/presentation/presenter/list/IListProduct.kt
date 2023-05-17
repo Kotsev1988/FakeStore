@@ -1,8 +1,12 @@
 package com.example.fakestore.presentation.presenter.list
 
-interface IListProduct<V: com.example.fakestore.presentation.view.list.IItemProductView> {
+import com.example.fakestore.presentation.view.list.IItemProductView
+
+interface IListProduct<V: IItemProductView> {
 
     var onItemClickListener: ((V) -> Unit)?
+    var onItemClickLikeListener: ((V) -> Unit)?
+
     fun bindView(view: V)
     fun getCount(): Int
 }

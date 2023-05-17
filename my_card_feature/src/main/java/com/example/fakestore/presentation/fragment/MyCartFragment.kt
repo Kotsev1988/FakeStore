@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import com.example.fakestore.di.DaggerMyCardComponent
 import com.example.fakestore.domain.IMyCardProducts
-import com.example.fakestore.navigation.BackPressedListener
 import com.example.fakestore.presentation.adapter.MyCardAdapter
 import com.example.fakestore.presentation.presenter.MyCartPresenter
 import com.example.fakestore.presentation.view.MyCartView
@@ -17,7 +17,7 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
-class MyCartFragment : MvpAppCompatFragment(), MyCartView{
+class MyCartFragment : MvpAppCompatFragment(), MyCartView {
 
     private var _binding: FragmentMyCartBinding? = null
     private val binding get() = _binding!!
@@ -31,12 +31,12 @@ class MyCartFragment : MvpAppCompatFragment(), MyCartView{
     private var myAdapter: com.example.fakestore.presentation.adapter.MyCardAdapter? = null
 
     val presenter: MyCartPresenter by moxyPresenter {
-       MyCartPresenter( AndroidSchedulers.mainThread(), myCardProducts)
+        MyCartPresenter(AndroidSchedulers.mainThread(), myCardProducts)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-DaggerMyCardComponent
+        DaggerMyCardComponent
             .builder()
             .baseComponent(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
             .build()
@@ -55,6 +55,10 @@ DaggerMyCardComponent
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.backFromMyCard.setOnClickListener {
+            Navigation.findNavController(it).popBackStack()
+        }
     }
 
     companion object {
@@ -62,7 +66,6 @@ DaggerMyCardComponent
         fun newInstance() =
             MyCartFragment()
     }
-
 
 
     override fun updateList() {

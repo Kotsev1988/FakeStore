@@ -6,7 +6,8 @@
     app:startDestination="@id/explorer"
     >
 
-    <include app:graph="@navigation/store_nav" />
+    <include app:graph="@navigation/product_detail_nav" />
+    <include app:graph="@navigation/search_navigation" />
     <include app:graph="@navigation/mycard_navigation" />
     <fragment
         android:id="@+id/explorer"

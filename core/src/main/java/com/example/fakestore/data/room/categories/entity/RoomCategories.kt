@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class RoomCategories (
 
     @PrimaryKey
-    var category: String
+    var category: String,
+    var select: Boolean
 
     )

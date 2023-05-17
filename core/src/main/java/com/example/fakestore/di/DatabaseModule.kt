@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.example.fakestore.data.room.Database
 import com.example.fakestore.data.room.cache.ICategoriesCache
+import com.example.fakestore.data.room.cache.IFavoritesCache
 import com.example.fakestore.data.room.cache.IProductsCache
 import com.example.fakestore.data.room.cache.room.CategoriesCache
+import com.example.fakestore.data.room.cache.room.FavoriteCachesImpl
 import com.example.fakestore.data.room.cache.room.ProductsCache
 import dagger.Module
 import dagger.Provides
@@ -25,5 +27,8 @@ class DatabaseModule {
     @Singleton
     @Provides
     fun productsCache(database: Database): IProductsCache = ProductsCache(database)
+    @Singleton
+    @Provides
+    fun favorites(database: Database): IFavoritesCache = FavoriteCachesImpl(database)
 
 }

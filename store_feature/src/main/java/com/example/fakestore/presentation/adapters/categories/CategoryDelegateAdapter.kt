@@ -44,11 +44,11 @@ class CategoryDelegateAdapter() :
 
             categoryHorizontalAdapter = model.presenter?.let {
                 CategoryHorizontalAdapter(it).apply {
-                    DaggerStoreComponent
-                        .builder()
-                        .baseComponent(InjectUtils.provideBaseComponent(itemView.context.applicationContext))
-                        .build()
-                        .inject(this)
+                    DaggerStoreComponent.factory().create(InjectUtils.provideBaseComponent(itemView.context.applicationContext)).inject(this)
+//                        .builder()
+//                        .baseComponent(InjectUtils.provideBaseComponent(itemView.context.applicationContext))
+//                        .build()
+//                        .inject(this)
                     //App.instance.appComponent.inject(this)
                 }
             }

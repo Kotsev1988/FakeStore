@@ -2,20 +2,21 @@ package com.example.fakestore.presentation.adapters.search
 
 import androidx.appcompat.widget.SearchView
 import com.example.fakestore.presentation.view.list.ILIstSearchingResultPresenter
+import com.example.fakestore.presentation.view.list.ISearchListView
 import com.example.fakestore.productsEntity.ProductsItem
 
 class SearchListResultPresenterInFragment(
 ) : ILIstSearchingResultPresenter {
     var results = arrayListOf<ProductsItem>()
 
-    override var itemClickListener: ((com.example.fakestore.presentation.view.list.ISearchListView) -> Unit)? = null
+    override var itemClickListener: ((ISearchListView) -> Unit)? = null
 
     override var listener: SearchView.OnQueryTextListener? =null
     override var listenerClose: SearchView.OnCloseListener? = null
 
 
-    override fun bindView(view: com.example.fakestore.presentation.view.list.ISearchListView) {
-        var result = results[view.pos]
+    override fun bindView(view: ISearchListView) {
+        val result = results[view.pos]
 
         view.setText(result.title)
     }

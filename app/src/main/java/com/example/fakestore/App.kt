@@ -2,8 +2,12 @@ package com.example.fakestore
 
 import android.app.Application
 import android.content.Context
-import com.example.fakestore.di.*
+import com.example.fakestore.di.AppComponent
 import com.example.fakestore.di.AppModule
+import com.example.fakestore.di.BaseComponent
+import com.example.fakestore.di.BaseComponentProvider
+import com.example.fakestore.di.DaggerAppComponent
+import com.example.fakestore.di.DaggerBaseComponent
 import com.example.fakestore.utils.InjectUtils
 
 
@@ -19,17 +23,13 @@ class App: Application(), BaseComponentProvider {
 
     lateinit var appComponent: AppComponent
 
-
-
-    var productSubComponent: ProductSubComponent? = null
-        private set
+//    var productSubComponent: ProductSubComponent? = null
+//        private set
 
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-
-
 
         baseComponent =  DaggerBaseComponent
             .builder()

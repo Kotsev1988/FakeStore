@@ -1,56 +1,60 @@
-package com.example.fakestore.presentation.fragments
+package com.example.product_detail_feature.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.fakestore.domain.IGetProductById
-import com.example.fakestore.navigation.BackPressedListener
-import com.example.fakestore.presentation.presenter.ProductPresenter
-import com.example.fakestore.presentation.view.ProductView
-import com.example.store_feature.R
-import com.example.store_feature.databinding.FragmentProductBinding
-import com.github.terrakok.cicerone.Router
+import com.example.fakestore.domain.IMyCardProducts
+import com.example.fakestore.utils.InjectUtils
+import com.example.product_detail_feature.R
+import com.example.product_detail_feature.databinding.FragmentProductBinding
+import com.example.product_detail_feature.di.DaggerProductComponent
+import com.example.product_detail_feature.presentation.view.ProductView
+import com.example.product_detail_feature.presenter.ProductPresenter
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
-
-class ProductFragment : MvpAppCompatFragment(), ProductView{
+class ProductFragment : MvpAppCompatFragment(), ProductView {
 
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
 
-//    @Inject
-//    lateinit var router: Router
-//
-//    @Inject
-//    lateinit var getProduct: IGetProductById
 
-//    @Inject
-//    lateinit var myCardProducts: IMyCardProducts
+    @Inject
+    lateinit var getProduct: IGetProductById
+
+    @Inject
+    lateinit var myCardProducts: IMyCardProducts
 
 
-    val presenter: ProductPresenter by moxyPresenter {
+    private val presenter: ProductPresenter by moxyPresenter {
 
-        val id = arguments?.getString(PRODUCT_ID)
-        println("ID PRODUCT "+id)
+        val id = arguments?.let {
+            it.getString("metadataFileSyncFilter")
+
+        }
         ProductPresenter(
-//            id, router, AndroidSchedulers.mainThread(),
-//            getProduct,
-           // myCardProducts
+            id,
+            AndroidSchedulers.mainThread(),
+            getProduct,
+            myCardProducts
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        DaggerProductComponent
+            .builder()
+            .baseComponent(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
+            .build().inject(this)
 
-        println("ProductFragment")
+        super.onCreate(savedInstanceState)
 
     }
 
@@ -66,10 +70,12 @@ class ProductFragment : MvpAppCompatFragment(), ProductView{
         super.onViewCreated(view, savedInstanceState)
 
         binding.addToCart.setOnClickListener{
-           // presenter.addToCard()
+            presenter.addToCard()
         }
 
         binding.backfromdetails.setOnClickListener {
+            //findNavController().popBackStack()
+            Navigation.findNavController(it).popBackStack()
            // findNavController().popBackStack(R.id.storeFragment, true)
            // this.backPressed()
         }
@@ -132,7 +138,7 @@ class ProductFragment : MvpAppCompatFragment(), ProductView{
                 arguments = Bundle().apply {
                     putString(PRODUCT_ID, id)
                 }
-                 //App.instance.initProductSubcomponent().inject(this)
+
             }
     }
 

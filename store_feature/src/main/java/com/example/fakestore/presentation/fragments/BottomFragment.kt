@@ -44,7 +44,7 @@ class BottomFragment : BottomSheetDialogFragment() {
 
         val listOfBestSellers = arguments?.let{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelableArrayList(BEST_SELLERS, ProductsItem::class.java)
+                it.getParcelableArrayList<ProductsItem>(BEST_SELLERS)
             } else {
                 it.getParcelableArrayList(BEST_SELLERS)
             }

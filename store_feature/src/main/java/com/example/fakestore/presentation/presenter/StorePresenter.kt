@@ -1,6 +1,7 @@
 package com.example.fakestore.presentation.presenter
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
@@ -9,18 +10,14 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
+import com.example.fakestore.data.room.cache.IFavoritesCache
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
-import com.example.fakestore.navigation.IScreens
 import com.example.fakestore.presentation.adapters.locationAndFilter.FilterClick
 import com.example.fakestore.presentation.adapters.search.SearchClick
-import com.example.fakestore.presentation.presenter.list.ProductsListPresenter
 import com.example.fakestore.presentation.view.StoreView
+import com.example.fakestore.productsEntity.Category
 import com.example.fakestore.productsEntity.Products
-import com.example.store_feature.R
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.Screen
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
@@ -35,15 +32,14 @@ private const val MINIMAL_DISTANCE = 100f
 class StorePresenter(
     private val categoryList: IGetCategories,
     private val productList: IGetProducts,
-   // private val router: Router,
+    private val favoriteList: IFavoritesCache,
     private val uiScheduler: Scheduler,
 
-    //private val screen: IScreens
 
     ) : MvpPresenter<StoreView>() {
 
     val listCategory = CategoryListPresenter()
-    val listProduct = ProductsListPresenter()
+    var listProduct = ProductsListPresenter()
 
     val searchClick = SearchClick()
 
@@ -51,31 +47,59 @@ class StorePresenter(
 
     var productsFilter = Products()
 
-    var isNav = false
 
+    @SuppressLint("CheckResult")
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-
-        viewState.init()
         loadCategories()
+        viewState.init()
+
 
         listCategory.itemClickListener = {
-            loadProducts(listCategory.categories[it.pos])
+
+            val index = it.pos
+
+            listCategory.categories[index].select = true
+            listCategory.categories.indices.forEach {
+                if (it != index) {
+                    listCategory.categories[it].select = false
+                }
+            }
+
+            loadProductByClick(listCategory.categories[index].name)
         }
 
         listProduct.onItemClickListener = {
             val id = listProduct.products[it.pos].id
-
-            println("ID "+listProduct.products[it.pos])
-
             viewState.goToProduct(id)
+        }
+
+        listProduct.onItemClickLikeListener = {
+
+            favoriteList.insertProductsToDB(listProduct.products[it.pos].id, true)
+                .observeOn(uiScheduler).doOnComplete {
+                    favoriteList.getProductsFromCache().observeOn(uiScheduler).subscribe(
+                        {
+                            listProduct.productsLikes.clear()
+                            listProduct.productsLikes.addAll(it)
+                            viewState.updateLikesView(it)
+                        },
+                        {
+                            viewState.onError(it)
+                        }
+                    )
+                }.subscribe()
+
+
 
         }
 
         searchClick.listenerFocusChanged = object : View.OnFocusChangeListener {
             override fun onFocusChange(p0: View?, p1: Boolean) {
                 if (p1) {
-                     // router.navigateTo(AndroidScreens().search())
+
+                    viewState.navigateToSearchFragment()
+                    // router.navigateTo(AndroidScreens().search())
                 } else {
                     return
                 }
@@ -92,9 +116,9 @@ class StorePresenter(
 
             { categories ->
                 listCategory.categories.clear()
-                listCategory.categories.addAll(categories)
+                listCategory.categories.addAll(categories as List<Category>)
                 viewState.updateList()
-                loadProducts(listCategory.categories[0])
+                loadProducts(listCategory.categories[0].name)
             },
             {
                 viewState.onError(it)
@@ -107,11 +131,38 @@ class StorePresenter(
         productList.getProductByCategory(category).observeOn(uiScheduler).subscribe(
 
             { products ->
-                println("Products " + products)
                 listProduct.products.clear()
                 listProduct.products.addAll(products)
                 productsFilter.addAll(products)
-                viewState.updateList()
+
+
+                favoriteList.getProductsFromCache().observeOn(uiScheduler).subscribe(
+                    {
+                        listProduct.productsLikes.addAll(it)
+                        viewState.updateList()
+                    },
+                    {
+
+                    }
+                )
+            },
+            {
+                viewState.onError(it)
+            }
+        )
+
+
+    }
+
+    private fun loadProductByClick(category: String) {
+
+        productList.getProductByCategory(category).observeOn(uiScheduler).subscribe(
+
+            { products ->
+                listProduct.products.clear()
+                listProduct.products.addAll(products)
+                productsFilter.addAll(products)
+                viewState.setProducts(products as Products)
             },
             {
                 viewState.onError(it)
@@ -154,7 +205,7 @@ class StorePresenter(
 
     private val onLocationListener = object : LocationListener {
         override fun onLocationChanged(location: android.location.Location) {
-            println("LocationChanged")
+
 
             // getAddressAsync(App.instance.getAppContext(), location)
 
@@ -176,8 +227,10 @@ class StorePresenter(
     fun getLocation(context: Context) {
 
         context.let { context ->
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_FINE_LOCATION) ==
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) ==
                 PackageManager.PERMISSION_GRANTED
             ) {
 
@@ -185,7 +238,6 @@ class StorePresenter(
                         as LocationManager
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 
-                    println("LocationManager")
                     val provider =
                         locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) /*.getProvider(LocationManager.GPS_PROVIDER)*/
                     provider?.let {
@@ -197,18 +249,15 @@ class StorePresenter(
                         )
                     }
                 } else {
-                    println("City location Last")
                     val location =
                         locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
                     if (location == null) {
-                        println("City location null")
                         //liveDataLocation.value = AppStateLocation.EmptyData("Empty")
                     } else {
                         getAddressAsync(context, location)
                     }
                 }
             } else {
-                println("City location null1")
                 //liveDataLocation.value = AppStateLocation.ShowRationalDialog("show")
             }
         }
@@ -228,8 +277,6 @@ class StorePresenter(
                 )
                 city = addresses?.get(0)?.getAddressLine(0).toString()
 
-                println("city " + city)
-
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -243,24 +290,24 @@ class StorePresenter(
                 viewState.onError(Throwable("Can't find location"))
             })
 
-//        Thread {
-//            try {
-//                val addresses = geoCoder.getFromLocation(
-//                    location.latitude,
-//                    location.longitude,
-//                    1
-//                )
-//
-//               val city = addresses?.get(0)?.getAddressLine(0)
-//                println("LOCATION "+city.toString())
-//                if (city != null) {
-//                    viewState.setLocation(city)
-//                    println("LOCATION "+city.toString())
-//                }
-//
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//            }
-//        }.start()
+        Thread {
+            try {
+                val addresses = geoCoder.getFromLocation(
+                    location.latitude,
+                    location.longitude,
+                    1
+                )
+
+               val city = addresses?.get(0)?.getAddressLine(0)
+                println("LOCATION "+city.toString())
+                if (city != null) {
+                    viewState.setLocation(city)
+                    println("LOCATION "+city.toString())
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }.start()
     }
 }

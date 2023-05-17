@@ -23,5 +23,6 @@ data class RoomProducts (
     var description: String,
     var image: String,
     var price: Double,
-    var title: String
+    var title: String,
+    var favorite: Boolean
     )

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fakestore.di.DaggerStoreComponent
 import com.example.fakestore.presentation.adapters.DelegateAdapter
 import com.example.fakestore.presentation.adapters.DelegateAdapterItem
+import com.example.fakestore.productsEntity.ProductsLike
 import com.example.fakestore.utils.InjectUtils
 import com.example.store_feature.databinding.ItemBestSellersBinding
 
@@ -25,6 +26,13 @@ class BestSellersDelegateAdapter :
         viewHolder: BestSellersViewHolder,
         payloads: List<DelegateAdapterItem.Payloadable>,
     ) {
+        when (val payload = payloads.firstOrNull() as? BestSellers.ChangePayload) {
+
+            is BestSellers.ChangePayload.UBestSellersLikes ->
+                viewHolder.bindCategoryChanged(payload.productLikes)
+
+            else -> viewHolder.bind(model)
+        }
         viewHolder.bind(model)
     }
 
@@ -35,15 +43,16 @@ class BestSellersDelegateAdapter :
 
             bestSellersProductAdapter = model.presenter?.let {
                 BestSellersProductAdapter(it).apply {
-                    DaggerStoreComponent
-                        .builder()
-                        .baseComponent(InjectUtils.provideBaseComponent(itemView.context.applicationContext))
-                        .build()
-                        .inject(this)
-                   // App.instance.appComponent.inject(this)
+                    DaggerStoreComponent.factory().create(InjectUtils.provideBaseComponent(itemView.context.applicationContext)).inject(this)
                 }
             }
             binding.hotsalesRecycle.adapter = bestSellersProductAdapter
         }
+
+        fun bindCategoryChanged(newProducts: ProductsLike) {
+           // bestSellersProductAdapter?.notifyDataSetChanged()
+        }
+
+
     }
 }

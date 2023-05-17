@@ -13,10 +13,12 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/favorites_feature" />
             <option value="$PROJECT_DIR$/model" />
             <option value="$PROJECT_DIR$/my_card_feature" />
             <option value="$PROJECT_DIR$/mylibrary" />
             <option value="$PROJECT_DIR$/navigation" />
+            <option value="$PROJECT_DIR$/product_detail_feature" />
             <option value="$PROJECT_DIR$/store_feature" />
           </set>
         </option>

@@ -2,10 +2,8 @@ package com.example.fakestore.navigation
 
 
 import com.example.fakestore.presentation.fragment.MyCartFragment
-import com.example.fakestore.presentation.fragments.ProductFragment
 import com.example.fakestore.presentation.fragments.SearchingFragment
 import com.example.fakestore.presentation.fragments.StoreFragment
-import com.example.fakestore.presentation.fragments.StoreFragment_MembersInjector
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 
@@ -17,8 +15,8 @@ class AndroidScreens: IScreens {
     }
 
     override fun product(id: String): Screen = FragmentScreen {
-
-        ProductFragment.newInstance(id)
+        SearchingFragment.newInstance()
+       //ProductFragment.newInstance(id)
     }
 
     override fun search(): Screen  = FragmentScreen{

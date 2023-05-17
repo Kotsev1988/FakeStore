@@ -41,7 +41,6 @@ class LocationAndFilterDelegateAdapter() :
         RecyclerView.ViewHolder(binding.root),
         IFilterClickView {
         fun bind(model: LocationAndFilter) {
-            println("bind "+model.location)
             val  spinner: ArrayList<String> = arrayListOf()
             spinner.add(model.location)
 
@@ -51,7 +50,6 @@ class LocationAndFilterDelegateAdapter() :
         }
 
         fun bindChange(locationName: String){
-            println("bindChange "+locationName)
             val  spinner: ArrayList<String> = arrayListOf()
             spinner.add(locationName)
 

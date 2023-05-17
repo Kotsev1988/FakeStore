@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
-import com.example.fakestore.network.INetworkStates
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 class AndroidNetworkStatus(context: Context): com.example.fakestore.network.INetworkStates {

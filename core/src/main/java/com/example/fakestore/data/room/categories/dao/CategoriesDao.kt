@@ -34,7 +34,7 @@ interface CategoriesDao {
     fun delete(categories: List<RoomCategories>)
 
     @Query("SELECT * FROM RoomCategories")
-    fun getAll(): List<String>
+    fun getAll(): List<RoomCategories>
 
 
     @Query("SELECT * FROM RoomCategories WHERE category = :category LIMIT 1")

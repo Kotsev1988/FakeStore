@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.fakestore.di.DaggerStoreComponent
 import com.example.fakestore.domain.IGetAllProducts
-import com.example.fakestore.navigation.BackPressedListener
 import com.example.fakestore.presentation.adapters.MainAdapter
 import com.example.fakestore.presentation.adapters.search.SearchDelegateAdapterInFragment
 import com.example.fakestore.presentation.adapters.search.SearchInFragment
@@ -13,14 +13,14 @@ import com.example.fakestore.presentation.presenter.SearchingPresenter
 import com.example.fakestore.presentation.view.SearchingView
 import com.example.fakestore.productsEntity.ProductsItem
 import com.example.fakestore.productsEntity.Rating
+import com.example.fakestore.utils.InjectUtils
 import com.example.store_feature.databinding.FragmentSearchingBinding
-import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
-class SearchingFragment : MvpAppCompatFragment(), SearchingView, BackPressedListener {
+class SearchingFragment : MvpAppCompatFragment(), SearchingView{
 
     private var _binding: FragmentSearchingBinding? = null
     private val binding get() = _binding!!
@@ -29,11 +29,9 @@ class SearchingFragment : MvpAppCompatFragment(), SearchingView, BackPressedList
     lateinit var searchingData: IGetAllProducts
 
 
-    @Inject
-    lateinit var router: Router
 
     val presenter: SearchingPresenter by moxyPresenter {
-        SearchingPresenter(searchingData, router, AndroidSchedulers.mainThread())
+        SearchingPresenter(searchingData,  AndroidSchedulers.mainThread())
     }
 
     private val searchingAdapter by lazy {
@@ -47,6 +45,9 @@ class SearchingFragment : MvpAppCompatFragment(), SearchingView, BackPressedList
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerStoreComponent.factory()
+            .create(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
+            .inject(this)
         super.onCreate(savedInstanceState)
 
     }
@@ -103,7 +104,6 @@ class SearchingFragment : MvpAppCompatFragment(), SearchingView, BackPressedList
             }
     }
 
-    override fun backPressed(): Boolean = presenter.backClicked()
 
 
 

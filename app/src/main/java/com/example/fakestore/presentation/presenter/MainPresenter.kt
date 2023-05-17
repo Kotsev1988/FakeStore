@@ -1,7 +1,6 @@
 package com.example.fakestore.presentation.presenter
 
 import com.example.fakestore.presentation.view.MainView
-import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
 
 class MainPresenter(

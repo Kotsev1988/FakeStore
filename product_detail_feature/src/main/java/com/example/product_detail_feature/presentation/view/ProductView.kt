@@ -1,4 +1,4 @@
-package com.example.fakestore.presentation.view
+package com.example.product_detail_feature.presentation.view
 
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -13,6 +13,7 @@ interface ProductView: MvpView {
     fun setPrice(price: String)
     fun onError(e: Throwable)
     fun remove()
+
     fun addedToMyCard()
     fun productInMyCard()
     fun turnOnAddButton()

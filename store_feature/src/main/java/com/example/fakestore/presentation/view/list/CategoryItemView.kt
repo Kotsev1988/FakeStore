@@ -4,4 +4,7 @@ interface CategoryItemView: IItemView {
     fun clickButton()
     fun setText(text: String)
     fun loadAvatar(url: String)
+     fun changeColor(pos: Int)
+
+
 }

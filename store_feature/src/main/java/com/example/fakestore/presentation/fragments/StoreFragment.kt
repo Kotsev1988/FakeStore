@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
+import com.example.fakestore.data.room.cache.IFavoritesCache
 import com.example.fakestore.di.DaggerStoreComponent
-import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.domain.IGetCategories
 import com.example.fakestore.domain.IGetProducts
 import com.example.fakestore.presentation.adapters.MainAdapter
@@ -31,6 +33,7 @@ import com.example.fakestore.presentation.view.StoreView
 import com.example.fakestore.productsEntity.Categories
 import com.example.fakestore.productsEntity.Products
 import com.example.fakestore.productsEntity.ProductsItem
+import com.example.fakestore.productsEntity.ProductsLike
 import com.example.fakestore.productsEntity.Rating
 import com.example.fakestore.utils.InjectUtils
 import com.example.store_feature.R
@@ -71,13 +74,17 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
     lateinit var categoryList: IGetCategories
 
     @Inject
-    lateinit var searchingData: IGetAllProducts
+    lateinit var favoriteList: IFavoritesCache
+//
+//    @Inject
+//    lateinit var searchingData: IGetAllProducts
 
 
     private val presenter: StorePresenter by moxyPresenter {
         StorePresenter(
             categoryList,
             productList,
+            favoriteList,
 
             // router,
             AndroidSchedulers.mainThread()
@@ -89,19 +96,15 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
             LocationAndFilter("", null), headerProduct, Category(Categories(), null),
             Search(arrayListOf(), null),
             headerCategory,
-            BestSellers(Products(), null)
+            BestSellers(Products(), ProductsLike(), null)
         )
 
     var productsFilter = Products()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerStoreComponent
-            .builder()
-            .baseComponent(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
-            .build()
+        DaggerStoreComponent.factory()
+            .create(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
             .inject(this)
-
-
         super.onCreate(savedInstanceState)
     }
 
@@ -118,31 +121,18 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
         @JvmStatic
         fun newInstance() =
-            StoreFragment().apply {
-//DaggerStoreComponent.builder().baseComponent(InjectUtils.provideBaseComponent(requireActivity().applicationContext)).build().inject(this)
-//                DaggerStoreComponent
-//                    .builder()
-//
-//                    .baseComponent(InjectUtils.provideBaseComponent(requireActivity().applicationContext))
-//
-//                    .build()
-//                    .inject(this)
-
-            }
+            StoreFragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("Store onViewCreated")
+
         nav = findNavController()
         binding.recyclerView.adapter = mainAdapter
-        println("isRestore ")
     }
 
     override fun init() {
 
-
-        println("isRestore ")
 
         binding.frameLoad.visibility = View.VISIBLE
 
@@ -152,7 +142,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
             Category(Categories(), presenter.listCategory),
             Search(arrayListOf(), presenter.searchClick),
             headerCategory,
-            BestSellers(Products(), presenter.listProduct)
+            BestSellers(Products(), ProductsLike(), presenter.listProduct)
         )
 
         mainAdapter.submitList(listDelegates)
@@ -179,12 +169,14 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         bottomDialog = BottomFragment.newInstance(productsFilter)
         bottomDialog.show(this.childFragmentManager, "tag")
 
-//        childFragmentManager.setFragmentResultListener(KAY_PARENT, this) { _, result ->
-//            presenter.filter(result.getString("brand"),
-//                result.getString("price"),
-//                result.getString("size"))
-//            bottomDialog.dismiss()
-//        }
+        childFragmentManager.setFragmentResultListener(KAY_PARENT, this) { _, result ->
+            presenter.filter(
+                result.getString("brand"),
+                result.getString("price"),
+                result.getString("size")
+            )
+            bottomDialog.dismiss()
+        }
     }
 
     override fun filter() {
@@ -196,13 +188,15 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
             filterProductsResult.add(ProductsItem("", "", 0, "", 0.0, Rating(0, 0.0), "", 0))
         }
 
+
+
         listDelegates = listOf(
             LocationAndFilter("", presenter.filterClick),
             headerProduct,
             Category(Categories(), presenter.listCategory),
             Search(arrayListOf(), presenter.searchClick),
             headerCategory,
-            BestSellers(filterProductsResult, presenter.listProduct)
+            BestSellers(filterProductsResult, ProductsLike(), presenter.listProduct)
         )
 
         mainAdapter.submitList(listDelegates)
@@ -218,7 +212,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
                 Category(Categories(), presenter.listCategory),
                 Search(arrayListOf(), presenter.searchClick),
                 headerCategory,
-                BestSellers(Products(), presenter.listProduct)
+                BestSellers(Products(), ProductsLike(), presenter.listProduct)
             )
         )
         // mainAdapter.notifyDataSetChanged()
@@ -229,14 +223,49 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         val bundle = Bundle()
         bundle.putString("PRODUCT_ID", id.toString())
 
-            nav?.navigate(R.id.store_nav, bundle)
+
+        val request = NavDeepLinkRequest.Builder
+            .fromUri("android-app://fakestore.app/productFragment/$id".toUri())
+            .build()
+        findNavController().navigate(request)
+
 
     }
 
+    override fun setProducts(products: Products) {
 
-//    override fun backPressed(): Boolean {
-//        return false //presenter.backClicked()
-//    }
+        listDelegates = listOf(
+            LocationAndFilter("", presenter.filterClick),
+            headerProduct,
+            Category(Categories(), presenter.listCategory),
+            Search(arrayListOf(), presenter.searchClick),
+            headerCategory,
+            BestSellers(products, ProductsLike(), presenter.listProduct)
+        )
+
+        mainAdapter.submitList(listDelegates)
+
+    }
+
+    override fun updateLikesView(productsLikes: ProductsLike) {
+
+        listDelegates = listOf(
+            LocationAndFilter("", presenter.filterClick),
+            headerProduct,
+            Category(Categories(), presenter.listCategory),
+            Search(arrayListOf(), presenter.searchClick),
+            headerCategory,
+            BestSellers(presenter.listProduct.products, productsLikes, presenter.listProduct)
+        )
+
+        mainAdapter.submitList(listDelegates)
+
+    }
+
+    override fun navigateToSearchFragment() {
+        findNavController().navigate(R.id.search_navigation)
+
+    }
 
     private fun checkPermission() {
         requireActivity().let {

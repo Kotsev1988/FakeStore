@@ -1,6 +1,5 @@
 package com.example.fakestore.di
 
-import com.example.fakestore.di.modules.CiceroneModule
 import com.example.fakestore.di.scope.MainActivityScope
 import com.example.fakestore.presentation.activity.MainActivity
 import dagger.Component

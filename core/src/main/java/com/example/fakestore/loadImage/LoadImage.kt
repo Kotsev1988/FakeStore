@@ -2,7 +2,6 @@ package com.example.fakestore.loadImage
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.example.fakestore.image.ILoadImage
 
 class LoadImage: com.example.fakestore.image.ILoadImage<ImageView> {
     override fun loadImage(url: String, container: ImageView) {

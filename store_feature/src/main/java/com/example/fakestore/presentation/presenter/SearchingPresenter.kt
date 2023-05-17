@@ -3,17 +3,13 @@ package com.example.fakestore.presentation.presenter
 import androidx.appcompat.widget.SearchView
 import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.presentation.adapters.search.SearchListResultPresenterInFragment
-
-import com.example.fakestore.presentation.presenter.list.ProductsListPresenter
 import com.example.fakestore.presentation.view.SearchingView
-import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 
 class SearchingPresenter(private val searchingData: IGetAllProducts,
-                         private val router: Router,
                          private val uiScheduler: Scheduler): MvpPresenter<SearchingView>() {
 
 
@@ -93,8 +89,5 @@ class SearchingPresenter(private val searchingData: IGetAllProducts,
     }
 }
 
-    fun backClicked(): Boolean {
-        router.exit()
-        return true
-    }
+
 }
