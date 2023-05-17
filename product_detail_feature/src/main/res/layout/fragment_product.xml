@@ -148,6 +148,7 @@
                     android:visibility="gone"
                     android:backgroundTint="#FF6E4E"
                     android:layout_gravity="center"
+
                     android:text="@string/exist_in_card"/>
 
             </FrameLayout>
