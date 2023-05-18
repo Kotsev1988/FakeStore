@@ -22,5 +22,6 @@ interface StoreView: MvpView {
      fun goToProduct(id: Int)
     fun setProducts(products: Products)
     fun updateLikesView(productsLikes: ProductsLike)
+    @StateStrategyType(SkipStrategy::class)
     fun navigateToSearchFragment()
 }

@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import com.example.fakestore.di.DaggerStoreComponent
 import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.presentation.adapters.MainAdapter
@@ -95,16 +98,19 @@ class SearchingFragment : MvpAppCompatFragment(), SearchingView{
          TODO("Not yet implemented")
      }
 
+    override fun openFoundedProduct(id: Int) {
+        val request = NavDeepLinkRequest.Builder
+            .fromUri("android-app://fakestore.app/productFragment/$id".toUri())
+            .build()
+
+         findNavController().navigate(request)
+    }
+
     companion object {
 
         @JvmStatic
         fun newInstance() =
-            SearchingFragment().apply {
-               // App.instance.appComponent.inject(this)
-            }
+            SearchingFragment()
     }
-
-
-
 
 }

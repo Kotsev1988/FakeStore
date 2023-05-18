@@ -1,6 +1,9 @@
 package com.example.fakestore.presentation.presenter
 
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import com.example.fakestore.domain.IGetAllProducts
 import com.example.fakestore.presentation.adapters.search.SearchListResultPresenterInFragment
 import com.example.fakestore.presentation.view.SearchingView
@@ -84,6 +87,8 @@ class SearchingPresenter(private val searchingData: IGetAllProducts,
     searchingPresenter.itemClickListener =
     {
         val id = searchingPresenter.results[it.pos].id
+
+        viewState.openFoundedProduct(id)
 
        // router.navigateTo(AndroidScreens().product(id.toString()))
     }
