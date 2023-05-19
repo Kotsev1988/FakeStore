@@ -52,13 +52,10 @@ class BottomFragment : BottomSheetDialogFragment() {
 
         initDialog()
         if (listOfBestSellers != null) {
-
-
             for (list in listOfBestSellers){
 
                 spinner.add(list.title)
                 spinnerSize.add(list.rating.rate)
-
             }
             spinnerPrice.add("$200 - $400")
             spinnerPrice.add("$100 - $500")

@@ -68,4 +68,9 @@
         <item name="cornerSize">10dp</item>
     </style>
 
+    <style name="MyShapeAppearanceCardView" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30dp</item>
+    </style>
+
 </resources>

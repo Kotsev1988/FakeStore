@@ -33,9 +33,7 @@ class StorePresenter(
     private val categoryList: IGetCategories,
     private val productList: IGetProducts,
     private val favoriteList: IFavoritesCache,
-    private val uiScheduler: Scheduler,
-
-
+    private val uiScheduler: Scheduler
     ) : MvpPresenter<StoreView>() {
 
     val listCategory = CategoryListPresenter()
@@ -46,6 +44,8 @@ class StorePresenter(
     val filterClick = FilterClick()
 
     var productsFilter = Products()
+
+    lateinit var contextLocation: Context
 
 
     @SuppressLint("CheckResult")
@@ -186,7 +186,6 @@ class StorePresenter(
 
                                     && it.price >= firstPrice
                                     && it.price <= secondPrice
-                            //&& it.rating.rate.toString() == result
                         }
                         .subscribeOn(Schedulers.io())
                         .observeOn(uiScheduler)
@@ -207,7 +206,7 @@ class StorePresenter(
         override fun onLocationChanged(location: android.location.Location) {
 
 
-            // getAddressAsync(App.instance.getAppContext(), location)
+             getAddressAsync(contextLocation, location)
 
         }
 
@@ -227,6 +226,8 @@ class StorePresenter(
     fun getLocation(context: Context) {
 
         context.let { context ->
+
+            contextLocation = context
             if (ContextCompat.checkSelfPermission(
                     context,
                     Manifest.permission.ACCESS_FINE_LOCATION

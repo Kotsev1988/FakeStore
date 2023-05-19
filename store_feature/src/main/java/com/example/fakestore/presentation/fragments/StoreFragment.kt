@@ -75,9 +75,6 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
     @Inject
     lateinit var favoriteList: IFavoritesCache
-//
-//    @Inject
-//    lateinit var searchingData: IGetAllProducts
 
 
     private val presenter: StorePresenter by moxyPresenter {
@@ -85,8 +82,6 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
             categoryList,
             productList,
             favoriteList,
-
-            // router,
             AndroidSchedulers.mainThread()
         )
     }
@@ -100,6 +95,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         )
 
     var productsFilter = Products()
+     private var location : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerStoreComponent.factory()
@@ -133,7 +129,6 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
     override fun init() {
 
-
         binding.frameLoad.visibility = View.VISIBLE
 
         listDelegates = listOf(
@@ -165,8 +160,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
     override fun showBottomDialog() {
 
-
-        bottomDialog = BottomFragment.newInstance(productsFilter)
+        bottomDialog = BottomFragment.newInstance(presenter.listProduct.products)
         bottomDialog.show(this.childFragmentManager, "tag")
 
         childFragmentManager.setFragmentResultListener(KAY_PARENT, this) { _, result ->
@@ -191,7 +185,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
 
         listDelegates = listOf(
-            LocationAndFilter("", presenter.filterClick),
+            LocationAndFilter(location, presenter.filterClick),
             headerProduct,
             Category(Categories(), presenter.listCategory),
             Search(arrayListOf(), presenter.searchClick),
@@ -204,7 +198,8 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
     }
 
     override fun setLocation(city: String) {
-
+        location = city
+        println("location")
         mainAdapter.submitList(
             listOf(
                 LocationAndFilter(city, presenter.filterClick),
@@ -215,8 +210,6 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
                 BestSellers(Products(), ProductsLike(), presenter.listProduct)
             )
         )
-        // mainAdapter.notifyDataSetChanged()
-
     }
 
     override fun goToProduct(id: Int) {
@@ -235,7 +228,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
     override fun setProducts(products: Products) {
 
         listDelegates = listOf(
-            LocationAndFilter("", presenter.filterClick),
+            LocationAndFilter(location, presenter.filterClick),
             headerProduct,
             Category(Categories(), presenter.listCategory),
             Search(arrayListOf(), presenter.searchClick),
@@ -250,7 +243,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
     override fun updateLikesView(productsLikes: ProductsLike) {
 
         listDelegates = listOf(
-            LocationAndFilter("", presenter.filterClick),
+            LocationAndFilter(location, presenter.filterClick),
             headerProduct,
             Category(Categories(), presenter.listCategory),
             Search(arrayListOf(), presenter.searchClick),
@@ -275,7 +268,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) ==
                         PackageManager.PERMISSION_GRANTED -> {
-                    // presenter.getLocation(requireActivity())
+                     presenter.getLocation(requireActivity())
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
