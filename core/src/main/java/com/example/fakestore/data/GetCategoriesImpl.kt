@@ -21,7 +21,6 @@ class GetCategoriesImpl(private val api: IStoreAPI, private val networkStatus: I
                 }
 
                 categoriesCache.insertCategoriesToDB(categoriesForDB).map {
-                    println("IT")
                     it
                 }
             }

@@ -3,10 +3,9 @@ package com.example.fakestore.presentation.activity
 import android.os.Bundle
 import com.example.fakestore.App
 import com.example.fakestore.databinding.ActivityMainBinding
-import com.example.fakestore.presentation.view.MainView
 import moxy.MvpAppCompatActivity
 
-class MainActivity : MvpAppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!

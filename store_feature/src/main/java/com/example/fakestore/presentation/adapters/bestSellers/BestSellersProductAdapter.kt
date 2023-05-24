@@ -39,8 +39,6 @@ class BestSellersProductAdapter(private val presenter: IListProductPresenter) :
         })
     }
 
-
-
     override fun getItemCount(): Int = presenter.getCount()
 
     inner class BestSellersProductViewHolder(val binding: ItemProductsBinding) :
@@ -71,6 +69,7 @@ class BestSellersProductAdapter(private val presenter: IListProductPresenter) :
         }
 
         override fun setDraw() {
+            println("SetDraw")
             binding.like.setImageDrawable( AppCompatResources.getDrawable(itemView.context, R.drawable.ic_liked))
         }
     }

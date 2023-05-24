@@ -29,6 +29,8 @@ class BottomFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        println("BottomFrag")
+
     }
 
     override fun onCreateView(

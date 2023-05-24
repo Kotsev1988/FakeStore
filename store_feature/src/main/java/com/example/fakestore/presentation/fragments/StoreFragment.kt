@@ -10,13 +10,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import com.example.fakestore.data.room.cache.IFavoritesCache
 import com.example.fakestore.di.DaggerStoreComponent
-import com.example.fakestore.domain.IGetCategories
-import com.example.fakestore.domain.IGetProducts
 import com.example.fakestore.presentation.adapters.MainAdapter
 import com.example.fakestore.presentation.adapters.bestSellers.BestSellers
 import com.example.fakestore.presentation.adapters.bestSellers.BestSellersDelegateAdapter
@@ -27,26 +25,23 @@ import com.example.fakestore.presentation.adapters.header.HeaderDelegateAdapter
 import com.example.fakestore.presentation.adapters.locationAndFilter.LocationAndFilter
 import com.example.fakestore.presentation.adapters.locationAndFilter.LocationAndFilterDelegateAdapter
 import com.example.fakestore.presentation.adapters.search.Search
+import com.example.fakestore.presentation.adapters.search.SearchClick
 import com.example.fakestore.presentation.adapters.search.SearchDelegateAdapter
-import com.example.fakestore.presentation.presenter.StorePresenter
-import com.example.fakestore.presentation.view.StoreView
+import com.example.fakestore.presentation.viewModel.StoreViewModel
+import com.example.fakestore.presentation.viewModel.appState.AppState
 import com.example.fakestore.productsEntity.Categories
 import com.example.fakestore.productsEntity.Products
-import com.example.fakestore.productsEntity.ProductsItem
 import com.example.fakestore.productsEntity.ProductsLike
-import com.example.fakestore.productsEntity.Rating
 import com.example.fakestore.utils.InjectUtils
 import com.example.store_feature.R
 import com.example.store_feature.databinding.FragmentStoreBinding
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 
 const val KAY_PARENT = "key_parent"
 const val REQUEST_CODE = 30
 
-class StoreFragment : MvpAppCompatFragment(), StoreView {
+class StoreFragment : MvpAppCompatFragment() {
 
     private var _binding: FragmentStoreBinding? = null
     private val binding get() = _binding!!
@@ -56,7 +51,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
             .add(LocationAndFilterDelegateAdapter())
             .add(HeaderDelegateAdapter())
             .add(CategoryDelegateAdapter())
-            .add(SearchDelegateAdapter(presenter.searchClick))
+            .add(SearchDelegateAdapter(viewModel.searchClick))
             .add(HeaderDelegateAdapter())
             .add(BestSellersDelegateAdapter())
             .build()
@@ -67,24 +62,14 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
 
     private var nav: NavController? = null
 
-    @Inject
-    lateinit var productList: IGetProducts
 
     @Inject
-    lateinit var categoryList: IGetCategories
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var favoriteList: IFavoritesCache
-
-
-    private val presenter: StorePresenter by moxyPresenter {
-        StorePresenter(
-            categoryList,
-            productList,
-            favoriteList,
-            AndroidSchedulers.mainThread()
-        )
+    private val viewModel: StoreViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[StoreViewModel::class.java]
     }
+
 
     private var listDelegates =
         listOf(
@@ -95,7 +80,8 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         )
 
     var productsFilter = Products()
-     private var location : String = ""
+    private var location: String = ""
+    private val likes = ProductsLike()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DaggerStoreComponent.factory()
@@ -109,62 +95,179 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         savedInstanceState: Bundle?,
     ): View {
 
+        println("onCreateView ")
+
         _binding = FragmentStoreBinding.inflate(inflater)
         return binding.root
     }
 
-    companion object {
-
-        @JvmStatic
-        fun newInstance() =
-            StoreFragment()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.init()
+
+        viewModel.listItem.observe(viewLifecycleOwner) {
+            renderData(it)
+        }
+
+        viewModel.clickEvent.observe(viewLifecycleOwner) {
+
+            val id = it.goToProductDetailifNotHandled()
+
+            id?.let {
+                val bundle = Bundle()
+
+                bundle.putString("PRODUCT_ID", id)
+
+                val request = NavDeepLinkRequest.Builder
+                    .fromUri("android-app://fakestore.app/productFragment/${id}".toUri())
+                    .build()
+                nav?.navigate(request)
+            }
+
+        }
+
+        checkPermission()
+
+        binding.frameLoad.visibility = View.VISIBLE
 
         nav = findNavController()
         binding.recyclerView.adapter = mainAdapter
     }
 
-    override fun init() {
+    private fun renderData(it: AppState) {
+        when (it) {
+            is AppState.OnSuccess -> {
+                println("OnSuccess "+it.bestSellers)
+                productsFilter.clear()
 
-        binding.frameLoad.visibility = View.VISIBLE
+                productsFilter = it.bestSellers as Products
+                likes.addAll(it.productsListPresenter.productsLikes)
 
-        listDelegates = listOf(
-            LocationAndFilter("", presenter.filterClick),
-            headerProduct,
-            Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(), presenter.searchClick),
-            headerCategory,
-            BestSellers(Products(), ProductsLike(), presenter.listProduct)
+
+                listDelegates = listOf(
+                    LocationAndFilter(it.city, it.filterClick),
+                    headerProduct,
+                    Category(it.category, it.categoryListPresenter),
+                    Search(arrayListOf(), SearchClick()),
+                    headerCategory,
+                    BestSellers(
+                        it.bestSellers,
+                        ProductsLike(),
+                        it.productsListPresenter
+                    )
+                )
+
+                mainAdapter.submitList(listDelegates)
+                binding.frameLoad.visibility = View.GONE
+
+            }
+
+
+            is AppState.OnSearch -> {
+
+            }
+
+            is AppState.SetProducts -> {
+                productsFilter.clear()
+                productsFilter = it.bestSellers as Products
+
+                listDelegates = listOf(
+                    LocationAndFilter(it.city, it.filterClick),
+                    headerProduct,
+                    Category(it.categoryListPresenter.categories, it.categoryListPresenter),
+                    Search(arrayListOf(), SearchClick()),
+                    headerCategory,
+                    BestSellers(
+                        it.bestSellers,
+                        ProductsLike(),
+                        it.productsListPresenter
+                    )
+                )
+
+                mainAdapter.submitList(listDelegates)
+                binding.frameLoad.visibility = View.GONE
+            }
+
+            is AppState.updateLikes -> {
+
+                likes.clear()
+                likes.addAll(it.productsLike)
+
+                listDelegates = listOf(
+                    LocationAndFilter(location, it.filterClick),
+                    headerProduct,
+                    Category(Categories(), it.categoryListPresenter),
+                    Search(arrayListOf(), SearchClick()),
+                    headerCategory,
+                    BestSellers(it.bestSellers as Products, likes, it.productsListPresenter)
+                )
+
+                mainAdapter.submitList(listDelegates)
+            }
+
+            is AppState.SetLocation ->{
+                location = it.city
+        println("location "+location)
+        mainAdapter.submitList(
+            listOf(
+                LocationAndFilter(location, it.filterClick),
+                headerProduct,
+                Category(Categories(), it.categoryListPresenter),
+                Search(arrayListOf(), SearchClick()),
+                headerCategory,
+                BestSellers(Products(), ProductsLike(), it.productsListPresenter)
+            )
         )
+            }
 
-        mainAdapter.submitList(listDelegates)
-        checkPermission()
+            is AppState.ShowBottomDialog -> {
 
+                showBottomDialog(productsFilter)
+            }
+
+            is AppState.SetFilter -> {
+                listDelegates = listOf(
+                    LocationAndFilter("", it.filterClick),
+                    headerProduct,
+                    Category(it.categoryListPresenter.categories, it.categoryListPresenter),
+                    Search(arrayListOf(), SearchClick()),
+                    headerCategory,
+                    BestSellers(
+                        it.bestSellers,
+                        ProductsLike(),
+                        it.productsListPresenter
+                    )
+                )
+
+                mainAdapter.submitList(listDelegates)
+            }
+
+            is AppState.NavigateToSearch -> {
+                navigateToSearchFragment()
+            }
+
+            is AppState.Error -> {
+                Toast.makeText(requireActivity(), it.error, Toast.LENGTH_SHORT).show()
+            }
+
+            is AppState.Loading -> {
+
+
+            }
+        }
     }
 
-    override fun onError(e: Throwable) {
-        Toast.makeText(requireActivity(), e.message, Toast.LENGTH_SHORT).show()
-    }
 
-    override fun updateList() {
-        binding.frameLoad.visibility = View.GONE
-        productsFilter.clear()
-        productsFilter.addAll(presenter.listProduct.products)
-        mainAdapter.notifyDataSetChanged()
-    }
+    private lateinit var bottomDialog: BottomFragment
 
-    lateinit var bottomDialog: BottomFragment
+    private fun showBottomDialog(productsFilter: Products) {
 
-    override fun showBottomDialog() {
-
-        bottomDialog = BottomFragment.newInstance(presenter.listProduct.products)
+        bottomDialog = BottomFragment.newInstance(productsFilter)
         bottomDialog.show(this.childFragmentManager, "tag")
 
         childFragmentManager.setFragmentResultListener(KAY_PARENT, this) { _, result ->
-            presenter.filter(
+            viewModel.filter(
                 result.getString("brand"),
                 result.getString("price"),
                 result.getString("size")
@@ -173,90 +276,24 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
         }
     }
 
-    override fun filter() {
-
-        val filterProductsResult = Products()
-        filterProductsResult.addAll(presenter.listProduct.products)
-
-        if (filterProductsResult.size == 0) {
-            filterProductsResult.add(ProductsItem("", "", 0, "", 0.0, Rating(0, 0.0), "", 0))
-        }
-
-
-
-        listDelegates = listOf(
-            LocationAndFilter(location, presenter.filterClick),
-            headerProduct,
-            Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(), presenter.searchClick),
-            headerCategory,
-            BestSellers(filterProductsResult, ProductsLike(), presenter.listProduct)
-        )
-
-        mainAdapter.submitList(listDelegates)
-
-    }
-
-    override fun setLocation(city: String) {
-        location = city
-        println("location")
-        mainAdapter.submitList(
-            listOf(
-                LocationAndFilter(city, presenter.filterClick),
-                headerProduct,
-                Category(Categories(), presenter.listCategory),
-                Search(arrayListOf(), presenter.searchClick),
-                headerCategory,
-                BestSellers(Products(), ProductsLike(), presenter.listProduct)
-            )
-        )
-    }
-
-    override fun goToProduct(id: Int) {
-        val bundle = Bundle()
-        bundle.putString("PRODUCT_ID", id.toString())
+//    override fun setLocation(city: String) {
+//        location = city
+//        println("location")
+//        mainAdapter.submitList(
+//            listOf(
+//                LocationAndFilter(city, presenter.filterClick),
+//                headerProduct,
+//                Category(Categories(), presenter.listCategory),
+//                Search(arrayListOf(), presenter.searchClick),
+//                headerCategory,
+//                BestSellers(Products(), ProductsLike(), presenter.listProduct)
+//            )
+//        )
+//    }
 
 
-        val request = NavDeepLinkRequest.Builder
-            .fromUri("android-app://fakestore.app/productFragment/$id".toUri())
-            .build()
-        findNavController().navigate(request)
-
-
-    }
-
-    override fun setProducts(products: Products) {
-
-        listDelegates = listOf(
-            LocationAndFilter(location, presenter.filterClick),
-            headerProduct,
-            Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(), presenter.searchClick),
-            headerCategory,
-            BestSellers(products, ProductsLike(), presenter.listProduct)
-        )
-
-        mainAdapter.submitList(listDelegates)
-
-    }
-
-    override fun updateLikesView(productsLikes: ProductsLike) {
-
-        listDelegates = listOf(
-            LocationAndFilter(location, presenter.filterClick),
-            headerProduct,
-            Category(Categories(), presenter.listCategory),
-            Search(arrayListOf(), presenter.searchClick),
-            headerCategory,
-            BestSellers(presenter.listProduct.products, productsLikes, presenter.listProduct)
-        )
-
-        mainAdapter.submitList(listDelegates)
-
-    }
-
-    override fun navigateToSearchFragment() {
-        findNavController().navigate(R.id.search_navigation)
+    fun navigateToSearchFragment() {
+        nav?.navigate(R.id.search_navigation)
 
     }
 
@@ -268,7 +305,7 @@ class StoreFragment : MvpAppCompatFragment(), StoreView {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) ==
                         PackageManager.PERMISSION_GRANTED -> {
-                     presenter.getLocation(requireActivity())
+                    viewModel.getLocation(requireActivity())
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {

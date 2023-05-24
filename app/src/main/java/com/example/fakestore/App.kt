@@ -11,27 +11,21 @@ import com.example.fakestore.di.DaggerBaseComponent
 import com.example.fakestore.utils.InjectUtils
 
 
-class App: Application(), BaseComponentProvider {
+class App : Application(), BaseComponentProvider {
 
-    companion object{
+    companion object {
         lateinit var instance: App
     }
 
-
-   private lateinit var baseComponent: BaseComponent
-
+    private lateinit var baseComponent: BaseComponent
 
     lateinit var appComponent: AppComponent
-
-//    var productSubComponent: ProductSubComponent? = null
-//        private set
-
 
     override fun onCreate() {
         super.onCreate()
         instance = this
 
-        baseComponent =  DaggerBaseComponent
+        baseComponent = DaggerBaseComponent
             .builder()
             .appModule(AppModule(this))
             .build()
@@ -42,17 +36,8 @@ class App: Application(), BaseComponentProvider {
             .baseComponent(InjectUtils.provideBaseComponent(this))
             .appModule(AppModule(this))
             .build()
-
-
     }
 
-//    fun initProductSubcomponent() = baseComponent.productSubComponent().also {
-//        productSubComponent = it
-//    }
-//
-//    fun removeProductSubcomponent()  {
-//        productSubComponent = null
-//    }
     fun getAppContext(): Context {
         return instance.applicationContext
     }

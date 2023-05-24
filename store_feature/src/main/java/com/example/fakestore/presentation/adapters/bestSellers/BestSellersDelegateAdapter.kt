@@ -50,6 +50,7 @@ class BestSellersDelegateAdapter :
         }
 
         fun bindCategoryChanged(newProducts: ProductsLike) {
+            println("bindCategoryChanged "+newProducts.toString())
            // bestSellersProductAdapter?.notifyDataSetChanged()
         }
 

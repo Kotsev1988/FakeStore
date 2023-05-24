@@ -12,7 +12,9 @@
     <fragment
         android:id="@+id/explorer"
         android:name="com.example.fakestore.presentation.fragments.StoreFragment"
-        android:label="StoreFragment" />
+        android:label="StoreFragment"
+
+        />
     <fragment
         android:id="@+id/myCart"
         android:name="com.example.fakestore.presentation.fragment.MyCartFragment"

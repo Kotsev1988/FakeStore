@@ -30,9 +30,19 @@ data class BestSellers(
                                    val presenter: IListProductPresenter?){
         override fun equals(other: Any?): Boolean {
             if (other is BestSellersContent){
+                println("isBest "+(productLikes == other.productLikes))
+                println("isBest $productLikes")
+                println("isBest "+other.productLikes.toString() )
                 return products == other.products && productLikes == other.productLikes && presenter == other.presenter
             }
             return false
+        }
+
+        override fun hashCode(): Int {
+            var result = products.hashCode()
+            result = 31 * result + productLikes.hashCode()
+            result = 31 * result + (presenter?.hashCode() ?: 0)
+            return result
         }
     }
 

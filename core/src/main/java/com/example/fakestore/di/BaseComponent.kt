@@ -24,7 +24,7 @@ import javax.inject.Singleton
         DatabaseModule::class,
         DataModule::class,
         LoadImageModule::class,
-    ProductModule::class
+        ProductModule::class
 
     ])
 
@@ -48,6 +48,7 @@ interface BaseComponent {
     fun favorites(): IFavoritesCache
 
 
-    //fun screens(): IScreens
+
+
 
 }

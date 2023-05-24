@@ -34,7 +34,7 @@ class LocationAndFilterDelegateAdapter() :
             else -> viewHolder.bind(model)
         }
 
-       // viewHolder.bind(model)
+        viewHolder.bind(model)
     }
 
     inner class LocationAndFilterViewHolder(private val binding: LocationAndFilterBinding) :
